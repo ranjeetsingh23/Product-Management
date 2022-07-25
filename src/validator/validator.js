@@ -23,8 +23,11 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-    return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
-  };
+    //return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
+    if(Password.length < 8 || Password.length > 15){
+          return false
+    }return true
+  }
   
   exports.isValidPincode = (num) => {
     return /^[0-9]{6}$/.test(num);
