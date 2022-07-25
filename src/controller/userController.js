@@ -91,11 +91,6 @@ exports.createUser = async (req,res) => {
     }
 }
 
-//validator functions 
-const isValidRequestBody = function (requestBody) {
-    return Object.keys(requestBody).length > 0;
-};
-
 
 exports.userLogin = async function (req, res) {
 
@@ -118,19 +113,25 @@ exports.userLogin = async function (req, res) {
       return res.status(400).send({status:false,message:"user password is required"})
      
      //email and password check from db
-     let user = await userModel.findOne({ email: email, password: password });
-     if (!user)
-         return res.status(401).send({ status: false, message: "credentials are not correct" });
        
-       
+         let checkEmail = await userModel.findOne({ email, password})
+         if (!checkEmail) {
+             return res.status(404).send({ status: false, message: "Please check email and try again" })
+         }
+ 
+         let checkPassword = await bcrypt.compare(password, checkEmail.passwordHash)
+ 
+         if (!checkPassword) {
+             return res.status(404).send({ status: false, message: "Please check password and try again" })
+         }
          let token = jwt.sign({
-            "userId": user._id,
+            "userId": checkEmail._id,
             "iat": new Date().getTime(),
             "exp": Math.floor(Date.now() / 1000)+ 10*60*60
         }, "Secret")
 
         res.setHeader("Authorization", token)
-        return res.status(200).send({ status: true, message: "User login successfull", data: {  userId : user._id,token :token } })
+        return res.status(200).send({ status: true, message: "User login successfull", data: {  userId : checkEmail._id,token :token } })
 
     } catch (error) {
         res.status(500).send({ status: false, error: error.message })
