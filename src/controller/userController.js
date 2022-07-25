@@ -138,8 +138,8 @@ exports.userLogin = async function (req, res) {
 
     try {
         let data = req.body;
-        let email = req.body.email;
-        let password = req.body.password;
+        
+        let {email,password} = data;
 
         //check data is exist | key exist in data
         if (validate.isValidBody(data)) {
