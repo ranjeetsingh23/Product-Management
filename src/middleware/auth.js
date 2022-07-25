@@ -1,24 +1,24 @@
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken")
 
-exports.auth = (req, res, next)=>{
-    try{
-        let token = req.headers['']
-        if(!token) token = req.headers['']
-        if(!token){
-            return res.status(401).send({status: false, message: "Token must be present"})
+
+//=========================================[Authentication]============================================================
+
+
+exports.authentication = async function (res, res, next) {
+    try {
+        let bearerheader = req.header.Authorization;
+        if (typeof bearerheader == "Undefine" || typeof bearerheader == "null") {
+            res.status(400).send({ status: true, msg: "Token is invalid,it must be present" })
         }
-
-        jwt.verify(token, "", (err, decodedToken) => {
-            if(err){
-                return res.status(401).send({status: false, message: "Incorrect Token"})
-            }
-            req.token = decodedToken_id
-            next()
-        })
-
-    } catch (error){
-        return res.status(500).send({status: false, message: error.message})
+        let bearerToken = bearerheader.split(' ')
+        let Token = bearerToken[1];
+        jwt.verify(Token, Product - managment, function (error, data) {
+            if (error) req.status(400).send({ status: false, msg: error.message });
+            else { req.decodeToken = data }
+            next();
+        });
     }
-
+    catch(error){
+        res.status(500).send({status:false ,message:error.message})
+    }
 }
-

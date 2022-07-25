@@ -11,21 +11,24 @@ exports.isValidBody = (reqBody) => {
 }
 
 exports.isValidString = (String) => {
-  return /\d/.test(String)
-}
-
-exports.isValidPhone = (Mobile) => {
-  return /^[6-9]\d{9}$/.test(Mobile)
-};
-
-exports.isValidEmail = (Email) => {
-  return /^([A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1}[A-Za-z.]{2,6})+$/.test(Email)
-};
-
-exports.isValidPwd = (Password) => {
-  return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
-};
-
-exports.isValidPincode = (num) => {
-  return /^[0-9]{6}$/.test(num);
-}
+    return /\d/.test(String)
+  }
+  
+  exports.isValidPhone = (Mobile) => {
+    return /^[6-9]\d{9}$/.test(Mobile)
+  };
+  
+  exports.isValidEmail = (Email) => {
+    return  /^([A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1}[A-Za-z.]{2,6})+$/.test(Email)
+  };
+  
+  exports.isValidPwd = (Password) => {
+    //return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
+    if(Password.length < 8 || Password.length > 15){
+          return false
+    }return true
+  }
+  
+  exports.isValidPincode = (num) => {
+    return /^[0-9]{6}$/.test(num);
+  }
