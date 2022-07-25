@@ -158,7 +158,7 @@ exports.userLogin = async function (req, res) {
         //email and password check from db
         let user = await userModel.findOne({ email: email});
         if (!user)
-            return res.status(401).send({ status: false, message: "Incorrect Email Id" });
+            return res.status(401).send({ status: false, message: "Invalid Email-Id" });
 
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(400).send({ status: false, message: "Incorrect password" })
