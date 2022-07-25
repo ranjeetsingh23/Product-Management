@@ -65,8 +65,8 @@ exports.createUser = async (req, res) => {
         //checking for image link
         if (files.length == 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
-       
-        
+
+
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
 
@@ -150,15 +150,14 @@ exports.userLogin = async function (req, res) {
         if (!email)
             return res.status(400).send({ status: false, message: "user Email is required" })
 
+
+        //email and password check from db
+        let user = await userModel.findOne({ email: email });
+        if (!user)
+            return res.status(401).send({ status: false, message: "Invalid Email-Id" });
         //password is required
         if (!password)
             return res.status(400).send({ status: false, message: "user password is required" })
-
-        //email and password check from db
-        let user = await userModel.findOne({ email: email});
-        if (!user)
-            return res.status(401).send({ status: false, message: "Invalid Email-Id" });
-
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(400).send({ status: false, message: "Incorrect password" })
 
@@ -177,15 +176,15 @@ exports.userLogin = async function (req, res) {
     }
 }
 
-exports.getUser = async (req,res) =>{
-    try{
+exports.getUser = async (req, res) => {
+    try {
         let userId = req.params.userId;
-      
+
         //getting the user document
-        const user = await userModel.findOne({ _id: userId})
-        if(!user) return res.status(404).send({status: false, message: "User Not Found"})
-        return res.status(200).send({ status: true, message: 'User Profile Details', data: user})
-      }catch (error) {
+        const user = await userModel.findOne({ _id: userId })
+        if (!user) return res.status(404).send({ status: false, message: "User Not Found" })
+        return res.status(200).send({ status: true, message: 'User Profile Details', data: user })
+    } catch (error) {
         res.status(500).send({ status: false, error: error.message })
-      }
     }
+}
