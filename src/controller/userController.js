@@ -159,7 +159,7 @@ exports.userLogin = async function (req, res) {
         if (!password)
             return res.status(400).send({ status: false, message: "user password is required" })
         let actualPassword = await bcrypt.compare(password, user.password);
-        if (!actualPassword) return res.status(400).send({ status: false, message: "Incorrect password" })
+        if (!actualPassword) return res.status(401).send({ status: false, message: "Incorrect password" })
 
 
         let token = jwt.sign({
