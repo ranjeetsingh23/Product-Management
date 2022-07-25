@@ -1,7 +1,7 @@
 const userModel = require("../model/userModel");
 const validate = require("../validator/validator")
 const jwt = require("jsonwebtoken");
-const bcrypt =require('bcrypt');
+const bcrypt = require('bcrypt');
 
 exports.createUser = async (req,res) => {
     try{
