@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 exports.isValid = (value) => {
   if (typeof value === "undefined" || typeof value === "null") return true;
@@ -23,7 +23,6 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-    //return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
     if(Password.length < 8 || Password.length > 15){
           return false
     }return true

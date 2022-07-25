@@ -70,6 +70,7 @@ exports.createUser = async (req, res) => {
        
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
+
         data.address = JSON.parse(data.address)
         let sAddress = data.address.shipping;
         let bAddress = data.address.billing;
@@ -155,9 +156,9 @@ exports.userLogin = async function (req, res) {
             return res.status(400).send({ status: false, message: "user password is required" })
 
         //email and password check from db
-        let user = await userModel.findOne({ email: email, password: password });
+        let user = await userModel.findOne({ email: email});
         if (!user)
-            return res.status(401).send({ status: false, message: "credentials are not correct" });
+            return res.status(401).send({ status: false, message: "Incorrect Email Id" });
 
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(400).send({ status: false, message: "Incorrect password" })
