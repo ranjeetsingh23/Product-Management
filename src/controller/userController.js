@@ -110,15 +110,16 @@ exports.createUser = async (req, res) => {
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
 
-        //validating the address 
-        if (data.address && typeof data.address != "object") {
-            return res.status(400).send({ status: false, message: "Address is in wrong format" })
-        };
 
         data.address = JSON.parse(data.address)
         let sAddress = data.address.shipping;
         let bAddress = data.address.billing;
 
+        //validating the address 
+        if (data.address && typeof data.address != "object") {
+            console.log(typeof data.address)
+            return res.status(400).send({ status: false, message: "Address is in wrong format" })
+        };
 
         //validation for shipping address
         if (sAddress && typeof sAddress != "object") {
@@ -155,7 +156,7 @@ exports.createUser = async (req, res) => {
         };
 
         //hashing password with bcrypt
-        password = await bcrypt.hash(password, 10);
+        data.password = await bcrypt.hash(password, 10);
 
         //getting the AWS-S3 link after uploading the user's profileImage
         let profileImgUrl = await aws.uploadFile(files[0]);
@@ -215,3 +216,15 @@ exports.userLogin = async function (req, res) {
         res.status(500).send({ status: false, error: error.message })
     }
 }
+
+exports.getUser = async (req,res) =>{
+    try{
+        let userId = req.params.userId;
+      
+        //getting the user document
+        const user = await userModel.findOne({ _id: userId})
+        return res.status(200).send({ status: true, message: 'User Profile Details', data: user})
+      }catch (error) {
+        res.status(500).send({ status: false, error: error.message })
+      }
+    }
