@@ -66,47 +66,7 @@ exports.createUser = async (req, res) => {
         if (files.length == 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
        
-        //  let sAddress = data.address.shipping;
-        // let bAddress = data.address.billing;
-        // //checking for address
-        // if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
-
-        // //validating the address 
-        // if (validate.isValid(data.address)) return res.status(400).send({ status: false, message: "Address should be in object and must contain shipping and billing addresses" });
-
-
-        // //validating the shipping address
-        // if (validate.isValid(sAddress)) return res.status(400).send({ status: false, message: "Shipping address should be in object and must contain street, city and pincode" });
-
-        // //checking for street shipping address
-        // if (validate.isValid(sAddress.street)) return res.status(400).send({ status: false, message: "Street is required of shipping address and should not be empty string" });
-
-        // //checking for city shipping address
-        // if (validate.isValid(sAddress.city)) return res.status(400).send({ status: false, message: "City is required of shipping address and should not be empty string" });
-
-        // //checking for pincode shipping address
-        // if (validate.isValid(sAddress.pincode)) return res.status(400).send({ status: false, message: "Pincode is required of shipping address and should not be an empty string" });
-
-        // if (!validate.isValidString(sAddress.pincode)) return res.status(400).send({ status: false, message: "Pincode should be in numbers" });
-
-        // if (!validate.isValidPincode(sAddress.pincode)) return res.status(400).send({ status: false, message: "Enter a valid pincode" });
-
-        // //validating the billing address
-        // if (validate.isValid(bAddress)) return res.status(400).send({ status: false, message: "Billing address should be in object and must contain street, city and pincode" });
-
-        // //checking for street billing address
-        // if (validate.isValid(bAddress.street)) return res.status(400).send({ status: false, message: "Street is required of billing address and should not be empty string" });
-
-        // //checking for city billing address
-        // if (validate.isValid(bAddress.city)) return res.status(400).send({ status: false, message: "City is required of billing address and should not be empty string" });
-
-        // //checking for pincode billing address
-        // if (validate.isValid(bAddress.pincode)) return res.status(400).send({ status: false, message: "Pincode is required of billing address and should not be an empty string" });
-
-        // if (!validate.isValidString(bAddress.pincode)) return res.status(400).send({ status: false, message: "Pincode should be in numbers" });
-
-        // if (!validate.isValidPincode(bAddress.pincode)) return res.status(400).send({ status: false, message: "Enter a valid pincode" });
-
+        
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
 
