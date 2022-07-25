@@ -183,6 +183,7 @@ exports.getUser = async (req,res) =>{
       
         //getting the user document
         const user = await userModel.findOne({ _id: userId})
+        if(!user) return res.status(404).send({status: false, message: "User Not Found"})
         return res.status(200).send({ status: true, message: 'User Profile Details', data: user})
       }catch (error) {
         res.status(500).send({ status: false, error: error.message })
