@@ -3,6 +3,7 @@ const validate = require("../validator/validator")
 const jwt = require("jsonwebtoken");
 const bcrypt =require('bcrypt');
 
+
 exports.createUser = async (req,res) => {
     try{
         let data = req.body;
@@ -99,48 +100,37 @@ const isValidRequestBody = function (requestBody) {
 exports.userLogin = async function (req, res) {
 
     try {
+    let data=req.body;
+     let email= req.body.email;
+     let password = req.body.password;
+     
+     //check data is exist | key exist in data
+     if (Object.keys(data).length == 0) {
+        return res.status(400).send({ status: false, message: "Data is required to login" })
+    }
 
-        let body = req.body
-        let { email, password } = body
-
-        if (!isValidRequestBody(body)) {
-            return res.status(400).send({ status: false, message: "body must be present !!" })
-        } else if (!email) {
-            return res.status(400).send({ status: false, message: "email must be present" })
-
-        } else if (!password) {
-            return res.status(400).send({ status: false, message: "password must be present" })
-
-        } else if (validate.isValidStringTrim(password)) {
-            return res.status(400).send({ status: false, message: "password cannot be empty" })
-
-        } else if (validate.isValidStringTrim(email)) {
-            return res.status(400).send({ status: false, message: "email cannot be empty" })
-
-        } else if (!validate.isValidEmail(email)) {
-            return res.status(400).send({ status: false, message: "email must be valid formate" })
-
-        }
-
-        let checkEmail = await userModel.findOne({ email: email })
-        if (!checkEmail) {
-            return res.status(404).send({ status: false, message: "Please check email and try again" })
-        }
-
-        let checkPassword = await bcrypt.compare(password, checkEmail.password)
-
-        if (!checkPassword) {
-            return res.status(404).send({ status: false, message: "Please check password and try again" })
-        }
-
-        let token = jwt.sign({
-            userLogin: checkEmail._id.toString(),
-            iat: new Date().getTime(),
-            exp: Math.floor(Date.now() / 1000)+ 10*60*60
+     //email is required
+     if(!email) 
+     return res.status(400).send({status:false,message:"user Email is required"})
+     
+     //password is required
+     if(!password)
+      return res.status(400).send({status:false,message:"user password is required"})
+     
+     //email and password check from db
+     let user = await userModel.findOne({ email: email, password: password });
+     if (!user)
+         return res.status(401).send({ status: false, message: "credentials are not correct" });
+       
+       
+         let token = jwt.sign({
+            "userId": user._id,
+            "iat": new Date().getTime(),
+            "exp": Math.floor(Date.now() / 1000)+ 10*60*60
         }, "Secret")
 
         res.setHeader("Authorization", token)
-        return res.status(200).send({ status: true, message: "User login successfull", data: { userId: checkEmail._id, token } })
+        return res.status(200).send({ status: true, message: "User login successfull", data: {  userId : user._id,token :token } })
 
     } catch (error) {
         res.status(500).send({ status: false, error: error.message })
