@@ -193,6 +193,8 @@ exports.getUser = async (req, res) => {
     }
 }
 
+// -------------------------------------------- PUT /user/:userId/profile --------------------------------------------
+
 exports.updateUser = async (req, res) => {
     try {
         let userId = req.params.userId;
@@ -200,7 +202,6 @@ exports.updateUser = async (req, res) => {
         let files = req.files;
 
         let { fname, lname, email, password, phone } = data;
-
        
          //getting user document
          let userProfile = await userModel.findById(userId);
@@ -215,28 +216,24 @@ exports.updateUser = async (req, res) => {
         //validationg the request body
         if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to update your account data" });
 
-
-
         if (typeof fname == 'string') {
             //checking for firstname
             if (validate.isValid(fname)) return res.status(400).send({ status: false, message: "First name should not be an empty string" });
 
             //validating firstname
             if (validate.isValidString(fname)) return res.status(400).send({ status: false, message: "Enter a valid First name and should not contains numbers" });
-
         }
+        
         if (typeof lname == 'string') {
             //checking for firstname
             if (validate.isValid(lname)) return res.status(400).send({ status: false, message: "Last name should not be an empty string" });
 
             //validating firstname
             if (validate.isValidString(lname)) return res.status(400).send({ status: false, message: "Enter a valid Last name and should not contains numbers" });
-
         }
 
         //validating user email-id
         if (data?.email && (!validate.isValidEmail(email))) return res.status(400).send({ status: false, message: "Please Enter a valid Email-id" });
-
 
         //checking if email already exist or not
         let duplicateEmail = await userModel.findOne({ email: email })
@@ -245,11 +242,9 @@ exports.updateUser = async (req, res) => {
         //validating user phone number
         if (data?.phone && (!validate.isValidPhone(phone))) return res.status(400).send({ status: false, message: "Please Enter a valid Phone number" });
 
-
         //checking if email already exist or not
         let duplicatePhone = await userModel.findOne({ phone: phone })
         if (duplicatePhone) return res.status(400).send({ status: false, message: "Phone already exist" })
-
 
         if (data?.password || typeof password == 'string') {
             //validating user password
@@ -257,10 +252,9 @@ exports.updateUser = async (req, res) => {
 
             //hashing password with bcrypt
             data.password = await bcrypt.hash(password, 10);
-
         }
-        if (data.address) {
 
+        if (data.address) {
 
             //converting string into object
             data.address = JSON.parse(data.address);
@@ -270,14 +264,12 @@ exports.updateUser = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Address is in wrong format" })
             }
 
-
             //tempAddress to store updated fields
             let tempAddress = JSON.parse(JSON.stringify(userProfile.address));
             if (data.address?.shipping) {
                 //validation for shipping address
                 if (typeof data.address?.shipping != "object") {
                     return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
-
                 };
 
                 //checking for shipping street and storing it in temp address
@@ -295,6 +287,7 @@ exports.updateUser = async (req, res) => {
                     };
                     tempAddress.shipping.city = data.address.shipping.city;
                 }
+
                 if (data.address.shipping?.pincode) {
                     if (validate.isValid(data.address.shipping.pincode)) {
                         return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
@@ -311,7 +304,6 @@ exports.updateUser = async (req, res) => {
                 //validation for billing address
                 if (typeof data.address?.billing != "object") {
                     return res.status(400).send({ status: false, message: "billing Address is in wrong format" })
-
                 };
 
                 //checking for billing street and storing it in temp address
@@ -329,6 +321,7 @@ exports.updateUser = async (req, res) => {
                     };
                     tempAddress.billing.city = data.address.billing.city;
                 }
+
                 if (data.address.billing?.pincode) {
                     if (validate.isValid(data.address.billing.pincode)) {
                         return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
@@ -339,6 +332,7 @@ exports.updateUser = async (req, res) => {
                     tempAddress.billing.pincode = data.address.billing.pincode;
                 }
             }
+            
             data.address = tempAddress;   //storing updated adress in data
         }
 
