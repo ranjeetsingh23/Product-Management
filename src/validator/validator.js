@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 exports.isValid = (value) => {
-    if(typeof value === "undefined" || typeof value === "null") return true;
-    if(typeof value === "string" && value.trim().length == 0) return true;
-    if(typeof value === "object" && Object.keys(value).length == 0) return true;
-    return false;
+  if (typeof value === "undefined" || typeof value === "null") return true;
+  if (typeof value === "string" && value.trim().length == 0) return true;
+  if (typeof value === "object" && Object.keys(value).length == 0) return true;
+  return false;
 }
 exports.isValidBody = (reqBody) => {
-    return Object.keys(reqBody).length == 0;
+  return Object.keys(reqBody).length == 0;
 }
 
 exports.isValidString = (String) => {
@@ -23,7 +23,6 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-    //return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(Password)
     if(Password.length < 8 || Password.length > 15){
           return false
     }return true
@@ -31,4 +30,9 @@ exports.isValidString = (String) => {
   
   exports.isValidPincode = (num) => {
     return /^[0-9]{6}$/.test(num);
+  }
+
+
+  exports.isValidObjectId = (objectId) => {
+    return mongoose.Types.ObjectId.isValid(objectId);
   }
