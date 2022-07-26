@@ -31,3 +31,8 @@ exports.isValidString = (String) => {
   exports.isValidPincode = (num) => {
     return /^[0-9]{6}$/.test(num);
   }
+
+
+  exports.isValidObjectId = (objectId) => {
+    return mongoose.Types.ObjectId.isValid(objectId);
+  }
