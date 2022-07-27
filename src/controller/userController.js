@@ -67,10 +67,6 @@ exports.createUser = async (req, res) => {
         //checking for image link
         if (files.length == 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 1b9bc9db5d4b3a2e2c1ffac53ad2b8578588ee19
 
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
