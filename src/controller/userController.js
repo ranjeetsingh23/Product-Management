@@ -71,7 +71,10 @@ exports.createUser = async (req, res) => {
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
 
-        data.address = JSON.parse(data.address)
+        try{data.address = JSON.parse(data.address)
+        }catch(error){
+            return res.status(400).send({status: false, message: "Pincode cannot start with 0"})
+        }
         let sAddress = data.address.shipping;
         let bAddress = data.address.billing;
 

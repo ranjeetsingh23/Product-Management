@@ -6,6 +6,8 @@ exports.isValid = (value) => {
   if (typeof value === "object" && Object.keys(value).length == 0) return true;
   return false;
 }
+
+
 exports.isValidBody = (reqBody) => {
   return Object.keys(reqBody).length == 0;
 }
@@ -35,4 +37,12 @@ exports.isValidString = (String) => {
 
   exports.isValidObjectId = (objectId) => {
     return mongoose.Types.ObjectId.isValid(objectId);
+  }
+
+  exports.isValidPrice = (price) => {
+    return /^[1-9]\d{0,7}(?:\.\d{1,2})?$/.test(price)
+  }
+  
+  exports.isValidSize = (sizes) => {
+    return ['S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'].includes(sizes);
   }
