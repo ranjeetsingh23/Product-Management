@@ -66,3 +66,24 @@ exports.getProductById= async function (req, res) {
     }
   }
   
+
+  //delete
+  exports. deletebyId=async function (req ,res){
+    try {
+        let ProductId=req.ProductId
+        if(!validate.isValidObjectId(ProductId)){res.status(400).send({status:false,msg:"PLease rpovide valid Product Id"})}
+        let getId=await productModel.findOne({_id:ProductId})
+        if(!getId){
+            {res.status(400).send({status:false,msg:"Product Not Found for the request id"})}
+        }
+        if(getId.isDeleted=="true"){
+            {res.status(400).send({status:false,msg:"Product is already deleted "})}
+        }
+        await productModel.updateOne({_id:ProductId},{isDeleted:true,deletedAt:Date.now()})
+        res.status(200).send({status:true,msg:"Product is deleted"})
+    }
+    catch (error) {
+        return res.status(500).send({ status: false, message: error.message })
+    }
+
+};

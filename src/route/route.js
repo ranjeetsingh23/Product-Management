@@ -17,5 +17,5 @@ router.put("/user/:userId/profile", mid.Authentication,mid.Authorization,userCon
 
 router.get('/products', productController.getProduct)
 router.get('/products/:productId',productController.getProductById)
-
+router.put( "/products/:productId",productController.deletebyId)
 module.exports = router
