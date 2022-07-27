@@ -174,7 +174,7 @@ exports. deletebyId=async(req ,res) => {
         if(!getId){
             {return res.status(404).send({status:false,message:"Product Not Found for the request id"})}
         }
-        if(getId.isDeleted=="true"){
+        if(getId.isDeleted == true){
             {return res.status(400).send({status:false,message:"Product is already deleted "})}
         }
         await productModel.updateOne({_id:product},{isDeleted:true,deletedAt:Date.now()})
