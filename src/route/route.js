@@ -14,6 +14,8 @@ router.put("/user/:userId/profile", mid.Authentication,mid.Authorization,userCon
 
 
 //Product APIs 
-router.post("/products", productController.createProduct)
+
+router.get('/products', productController.getProduct)
+router.get('/products/:productId',productController.getProductById)
 
 module.exports = router
