@@ -161,24 +161,24 @@ exports.getProductById = async (req, res) => {
         let allProducts = await productModel.findOne({ _id: id, isDeleted: false }).select({ deletedAt: 0 })
         return res.status(200).send({ status: true, message: "product found successfully", data: allProducts })
     }
-    catch (err) {
-        res.status(500).send({ status: false, msg: err.message })
+    catch (error) {
+        res.status(500).send({ status: false, message: error.message })
     }
 }
 
 exports. deletebyId=async(req ,res) => {
     try {
         let product =req.params.productId
-        if(!validate.isValidObjectId(product)){res.status(400).send({status:false,msg:"Please provide valid Product Id"})}
+        if(!validate.isValidObjectId(product)){res.status(400).send({status:false,message:"Please provide valid Product Id"})}
         let getId=await productModel.findOne({_id:product})
         if(!getId){
-            {return res.status(400).send({status:false,msg:"Product Not Found for the request id"})}
+            {return res.status(404).send({status:false,message:"Product Not Found for the request id"})}
         }
         if(getId.isDeleted=="true"){
-            {return res.status(400).send({status:false,msg:"Product is already deleted "})}
+            {return res.status(400).send({status:false,message:"Product is already deleted "})}
         }
         await productModel.updateOne({_id:product},{isDeleted:true,deletedAt:Date.now()})
-        return res.status(200).send({status:true,msg:"Product is deleted"})
+        return res.status(200).send({status:true,message:"Product is deleted"})
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message })
