@@ -20,11 +20,7 @@ router.post('/products', productController.createProduct)
 router.get('/products', productController.getProduct)
 
 router.get('/products/:productId',productController.getProductById)
-<<<<<<< HEAD
-router.put( "/products/:productId",productController.deletebyId)
-=======
 
 router.put( "/products/:productId",productController.deletebyId)
 
->>>>>>> 586bad6e7d55418e7c5c5106447a7e09314ba5b9
 module.exports = router
