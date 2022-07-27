@@ -15,4 +15,5 @@ router.put("/user/:userId/profile", mid.Authentication,mid.Authorization,userCon
 
 //Product APIs 
 router.post("/products", productController.createProduct)
+
 module.exports = router
