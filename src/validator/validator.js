@@ -46,3 +46,21 @@ exports.isValidString = (String) => {
   exports.isValidSize = (sizes) => {
     return ['S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'].includes(sizes);
   }
+
+  exports.numCheck = (num) => {
+    let numCheck = /^[\0-9]*$/
+    return numCheck.test(num)
+}
+
+exports.anyObjectKeysEmpty = (value) =>{ 
+  let obArr = Object.keys(value)
+  let str = ''
+  obArr.forEach(e=>{
+      if(value.hasOwnProperty(e) && value[e].trim() == "") {
+          str+=`${e} `
+      }
+  }) //hasOwnProperty() method to check whether an index exists
+
+  str = str.trim()
+  return str==""?false:str
+}
