@@ -16,7 +16,7 @@ exports.Authentication = async (req, res, next) => {
           if(error) {
             return res.status(400).send({ status: false, message: error.message });
           }else {
-            req.decodedToken = data;
+            req.decodedToken = data
             next()
           }
         });
@@ -33,7 +33,7 @@ exports.Authorization = async (req, res, next) => {
         let loggedInUser = req.decodedToken.userId;
         let loginUser;
         
-        if(req.params?.userId){
+        if(req.params.userId){
           if(!validate.isValidObjectId(req.params.userId)) return res.status(400).send({ status: false, message: "Enter a valid user Id" });
           let checkUserId = await userModel.findById(req.params.userId);
           if(!checkUserId) return res.status(404).send({ status: false, message: "User not found" });
