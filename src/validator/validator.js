@@ -64,3 +64,9 @@ exports.anyObjectKeysEmpty = (value) =>{
   str = str.trim()
   return str==""?false:str
 }
+
+
+// exports.isValidImage = (img) => {
+//   return /^(([a-zA-Z]:)|(\\{2}\w+)\$?)(\\(\w[\w].*))+(.jpeg|.JPEG|.JPG|.jpg|.gif|.GIF|.png|.PNG)$/.test(img);
+// }
+

@@ -82,10 +82,10 @@ exports.createProduct = async (req, res) => {
             let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
         
-
+        
         for (let i = 0; i < data.availableSizes.length; i++) {
             if (!validate.isValidSize(data.availableSizes[i])) {
-                return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" })
+                return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
             }
         }
     }
@@ -277,7 +277,7 @@ exports.updateProduct = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Enter a valid value for isFreeShipping" })
             }
 
-            if (typeof data.isFreeShipping !== 'boolean') return res.status(400).send({ status: false, message: "Free shipping should be in boolean value" })//boolean 
+            // if (typeof data.isFreeShipping !== 'boolean') return res.status(400).send({ status: false, message: "Free shipping should be in boolean value" })//boolean 
         }
 
         // =================================================style validation=============================================================
