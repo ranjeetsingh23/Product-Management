@@ -16,7 +16,7 @@ exports.Authentication = async (req, res, next) => {
           if(error) {
             return res.status(400).send({ status: false, message: error.message });
           }else {
-            req.decodedToken = data;
+            req.decodedToken = data
             next()
           }
         });

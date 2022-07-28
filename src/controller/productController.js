@@ -322,7 +322,7 @@ exports.deletebyId = async (req, res) => {
     try {
         let product = req.params.productId
         if (!validate.isValidObjectId(product)) { res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
-        let getId = await productModel.findOne({ _id: product })
+        let getId = await productModel.findOne({ _id: product });
         if (!getId) {
             { return res.status(404).send({ status: false, message: "Product Not Found for the request id" }) }
         }

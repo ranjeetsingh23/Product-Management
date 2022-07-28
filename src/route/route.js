@@ -41,4 +41,4 @@ router.delete( "/products/:productId",productController.deletebyId)
 
 
 
-module.exports = router
+module.exports = router;

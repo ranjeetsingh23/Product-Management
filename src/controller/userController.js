@@ -17,7 +17,7 @@ exports.createUser = async (req, res) => {
         if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to create your account" });
 
         //validating firstname
-        if (!fname) return res.status(400).send({ status: false, message: "First name is required" })
+        if (!fname) return res.status(400).send({ status: false, message: "First name is required" });
 
         //checking for firstname
         if (validate.isValid(fname)) return res.status(400).send({ status: false, message: "First name should not be an empty string" });
