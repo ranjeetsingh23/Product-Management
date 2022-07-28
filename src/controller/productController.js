@@ -65,8 +65,8 @@ exports.createProduct = async (req, res) => {
         if (files.length == 0) return res.status(400).send({ status: false, message: "ProductImage is required" });
 
         //getting the AWS-S3 link after uploading the user's profileImage
-        let profileImgUrl = await aws.uploadFile(files[0]);
-        data.profileImage = profileImgUrl;
+        let productImgUrl = await aws.uploadFile(files[0]);
+        data.productImage = productImgUrl;
 
         //checking for style in data
         if (style) {
@@ -77,7 +77,7 @@ exports.createProduct = async (req, res) => {
 
         //checking for available Sizes of the products
         if (availableSizes) {
-            let size = availableSizes.toUpperCase().split(", ") //creating an array
+            let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
         }
 
