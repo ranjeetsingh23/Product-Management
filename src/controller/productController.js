@@ -65,8 +65,8 @@ exports.createProduct = async (req, res) => {
         if (files.length == 0) return res.status(400).send({ status: false, message: "ProductImage is required" });
 
         //getting the AWS-S3 link after uploading the user's profileImage
-        let profileImgUrl = await aws.uploadFile(files[0]);
-        data.profileImage = profileImgUrl;
+        let productImgUrl = await aws.uploadFile(files[0]);
+        data.productImage = productImgUrl;
 
         //checking for style in data
         if (style) {
@@ -77,7 +77,7 @@ exports.createProduct = async (req, res) => {
 
         //checking for available Sizes of the products
         if (availableSizes) {
-            let size = availableSizes.toUpperCase().split(",")  //creating an array
+            let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
         }
 
@@ -189,16 +189,16 @@ exports.getProduct = async function (req, res) {
 exports.deletebyId=async(req ,res) => {
     try {
         let product =req.params.productId
-        if(!validate.isValidObjectId(product)){res.status(400).send({status:false,msg:"Please provide valid Product Id"})}
+        if(!validate.isValidObjectId(product)){res.status(400).send({status:false,message:"Please provide valid Product Id"})}
         let getId=await productModel.findOne({_id:product})
         if(!getId){
-            {return res.status(404).send({status:false,msg:"Product Not Found for the request id"})}
+            {return res.status(404).send({status:false,message:"Product Not Found for the request id"})}
         }
-        if(getId.isDeleted=="true"){
-            {return res.status(400).send({status:false,msg:"Product is already deleted "})}
+        if(getId.isDeleted == true){
+            {return res.status(400).send({status:false,message:"Product is already deleted "})}
         }
         await productModel.updateOne({_id:product},{isDeleted:true,deletedAt:Date.now()})
-        return res.status(200).send({status:true,msg:"Product is deleted"})
+        return res.status(200).send({status:true,message:"Product is deleted"})
     }
     catch (error) {
         return res.status(500).send({ status: false, message: error.message })
