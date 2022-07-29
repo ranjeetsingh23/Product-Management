@@ -2,8 +2,7 @@ const productModel = require('../model/productModel');
 const validate = require("../validator/validator");
 const aws = require('../aws/aws-s3');
 
-
-// ---------------------------------------------------- CREATE PRODUCTS ------------------------------------------------
+//---------------------------------------CREATE PRODUCTS-------------------------------------------
 
 exports.createProduct = async (req, res) => {
     try {
@@ -81,14 +80,22 @@ exports.createProduct = async (req, res) => {
         if (availableSizes) {
             let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
+<<<<<<< HEAD
         
         
         for (let i = 0; i < data.availableSizes.length; i++) {
             if (!validate.isValidSize(data.availableSizes[i])) {
                 return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
+=======
+
+
+            for (let i = 0; i < data.availableSizes.length; i++) {
+                if (!validate.isValidSize(data.availableSizes[i])) {
+                    return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" })
+                }
+>>>>>>> eb47f117cd8fb1bbae5a5092eb512664e3693ddc
             }
         }
-    }
 
         if (installments || typeof installments == 'string') {
             if (!validate.isValidString(installments)) return res.status(400).send({ status: false, message: "Installments should be in number" });
@@ -104,7 +111,7 @@ exports.createProduct = async (req, res) => {
 }
 
 
-// ---------------------------------------------------- GET PRODUCTS ------------------------------------------------
+// -------------------------------------------- GET PRODUCTS ---------------------------------------------
 
 exports.getProduct = async function (req, res) {
     try {
@@ -163,7 +170,7 @@ exports.getProduct = async function (req, res) {
 }
 
 
-// -------------------------------------------------- GET product/:productId ------------------------------------------------
+// ----------------------------------- GET product/:productId -------------------------------------------
 
 exports.getProductById = async function (req, res) {
 
@@ -191,13 +198,13 @@ exports.getProductById = async function (req, res) {
 }
 
 
-// -------------------------------------------------- PUT product/:productId ------------------------------------------------
+// ----------------------------------- PUT product/:productId --------------------------------------
 
 exports.updateProduct = async (req, res) => {
     try {
         let ProductId = req.params.productId
 
-        // ==============================================================================================================
+        
         if (!validate.isValidObjectId(ProductId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
         let getId = await productModel.findOne({ _id: ProductId })
         if (!getId) {
@@ -208,7 +215,7 @@ exports.updateProduct = async (req, res) => {
         }
         let data = req.body;
         let files = req.files;
-        // =================================================file validation=============================================================
+        // ===============================file validation=====================================
 
         if (validate.isValidBody(data)) { res.status(400).send({ status: false, message: "Body cannot be empty " }) }
         //checking for product image
@@ -217,8 +224,16 @@ exports.updateProduct = async (req, res) => {
             let productImgUrl = await uploadFile(files[0]);
             data.productImage = productImgUrl;
         }
+<<<<<<< HEAD
        
         // =================================================title validation=============================================================
+=======
+        // ======================================================================================================
+        //validation if user can given is deleted true
+        // if (data.isDeleted || data.deletedAt || typeof (data.isDeleted) == "string" || typeof (data.deletedAt) == "string") { res.status(400).send({ status: false, message: "invalid request" }) }
+
+        // =================================================title validation===================================
+>>>>>>> eb47f117cd8fb1bbae5a5092eb512664e3693ddc
 
         if (data.title || data.title == "string") {
             if (validate.isValid(data.title)) {
@@ -231,7 +246,7 @@ exports.updateProduct = async (req, res) => {
                 return res.status(400).send({ status: false, message: "title is already present in database" })
             }
         }
-        // =================================================Deecription validation=============================================================
+        // ==============================================Description validation============================
 
         if (data.description || data.description == "string") {
             if (validate.isValid(data.description)) {
@@ -241,13 +256,13 @@ exports.updateProduct = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Description should not contaiins numbers" })
             }
         }
-        // =================================================price validation=============================================================
-        
+        // ====================================price validation===============================================
+
         // value shouldnt be empty--- validation
         if (data.price || data.price == "string") {
             if (!(validate.isValidString(data.price) && validate.isValidPrice(data.price))) return res.status(400).send({ status: false, message: "Price of product should be valid and in numbers" });
         }
-        // ================================================= currency validation=============================================================
+        // ==================================== currency validation=======================
 
         if (data.currencyId || typeof data.currencyId == 'string') {
             //checking for currencyId 
@@ -255,7 +270,7 @@ exports.updateProduct = async (req, res) => {
 
             if (!(/INR/.test(data.currencyId))) return res.status(400).send({ status: false, message: "Currency Id of product should be in uppercase 'INR' format" });
         }
-        // ================================================= =============================================================
+        // ================================================= ========================================
 
         if (data.currencyFormat || typeof data.currencyFormat == 'string') {
             //checking for currency formate
@@ -263,7 +278,7 @@ exports.updateProduct = async (req, res) => {
 
             if (!(/₹/.test(data.currencyFormat))) return res.status(400).send({ status: false, message: "Currency format of product should be in '₹' " });
         }
-        // ================================================= free shipping validation=============================================================
+        // ==================================== free shipping validation========================
         if (data.isFreeShipping || typeof data.isFreeShipping == 'string') {
             if (validate.isValid(data.isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not contain white spaces" });
             //if the user given any whitespace
@@ -276,26 +291,26 @@ exports.updateProduct = async (req, res) => {
             }
         }
 
-        // =================================================style validation=============================================================
+        // =============================style validation===========================================
         if (data.style || typeof data.style == 'string') {
             if (validate.isValid(data.style)) return res.status(400).send({ status: false, message: "Style should be valid an does not contain numbers" });
             if (validate.isValidString(data.style)) return res.status(400).send({ status: false, message: "Style should be valid an does not contain numbers" });
         }
-        // =================================================availablesizes validation=============================================================
+        // =============================availablesizes validation==========================================
         if (data.availableSizes || typeof data.availableSizes == 'string') {
             //checking for available Sizes of the products
             let size = data.availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
-        
-        for (let i = 0; i < data.availableSizes.length; i++) {
-            if (!validate.isValidSize(data.availableSizes[i])) {
-                return res.status(400).send({ status: false, message: "Sizes should one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL' and 'XL'" })
+
+            for (let i = 0; i < data.availableSizes.length; i++) {
+                if (!validate.isValidSize(data.availableSizes[i])) {
+                    return res.status(400).send({ status: false, message: "Sizes should one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL' and 'XL'" })
+                }
             }
         }
-    }
 
         if (data.installments || typeof data.installments == 'string') {
-            if (!validate.isValidString(data.installments) ) return res.status(400).send({ status: false, message: "Installments should be in numbers and valid" });
+            if (!validate.isValidString(data.installments)) return res.status(400).send({ status: false, message: "Installments should be in numbers and valid" });
         }
 
         let updatedProduct = await productModel.findByIdAndUpdate(
@@ -312,7 +327,7 @@ exports.updateProduct = async (req, res) => {
 }
 
 
-// -------------------------------------------------- DELETE product/:productId ------------------------------------------------
+// ---------------------------------------- DELETE product/:productId --------------------------
 
 exports.deletebyId = async (req, res) => {
     try {
