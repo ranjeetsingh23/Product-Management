@@ -47,11 +47,6 @@ exports.isValidString = (String) => {
     return ['S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'].includes(sizes);
   }
 
-  exports.numCheck = (num) => {
-    let numCheck = /^[\0-9]*$/
-    return numCheck.test(num)
-}
-
 exports.anyObjectKeysEmpty = (value) =>{ 
   let obArr = Object.keys(value)
   let str = ''
@@ -64,3 +59,7 @@ exports.anyObjectKeysEmpty = (value) =>{
   str = str.trim()
   return str==""?false:str
 }
+
+
+
+

@@ -49,7 +49,7 @@ exports.createProduct = async (req, res) => {
 
 
         if (isFreeShipping || typeof isFreeShipping == 'string') {
-            if (validate.isValid(isFreeShipping)) return res.status(400).send({ status: false, message: " isFreeShipping should not be empty" });
+            if (validate.isValid(isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not contain white spaces" });
             if (typeof data.isFreeShipping == 'string') {
                 //converting it to lowercase and removing white spaces
                 data.isFreeShipping = isFreeShipping.toLowerCase().trim();
@@ -57,7 +57,7 @@ exports.createProduct = async (req, res) => {
                     //converting from string to boolean
                     data.isFreeShipping = JSON.parse(data.isFreeShipping);
                 } else {
-                    return res.status(400).send({ status: false, message: "Enter a boolean value for isFreeShipping" });
+                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
                 }
             }
         }
@@ -80,12 +80,11 @@ exports.createProduct = async (req, res) => {
         if (availableSizes) {
             let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
-
-
-            for (let i = 0; i < data.availableSizes.length; i++) {
-                if (!validate.isValidSize(data.availableSizes[i])) {
-                    return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" })
-                }
+        
+        
+        for (let i = 0; i < data.availableSizes.length; i++) {
+            if (!validate.isValidSize(data.availableSizes[i])) {
+                return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
             }
         }
 
@@ -95,7 +94,8 @@ exports.createProduct = async (req, res) => {
         }
 
         let createProduct = await productModel.create(data);
-        return res.status(201).send({ status: true, message: "Success", data: createProduct })
+        return res.status(201).send({ status: true, message: "Success", data: createProduct });
+    }
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -105,7 +105,7 @@ exports.createProduct = async (req, res) => {
 
 // -------------------------------------------- GET PRODUCTS ---------------------------------------------
 
-exports.getProduct = async function (req, res) {
+exports.getProduct = async (req, res) => {
     try {
         let userQuery = req.query
         let checkquery = validate.anyObjectKeysEmpty(userQuery)
@@ -120,20 +120,19 @@ exports.getProduct = async function (req, res) {
                 filter['availableSizes'] = { $in: sizeArray }
             }
             if (!validate.isValid(name)) {
-                //const titleName = name.trim().split(" ").filter(word => word).join("") //problem not solved here
-                const titleName = name.replace(/ +/g,"")
-                filter['title'] = { $regex: name, $options: 'i' }
-            }
+                const titleName = name.replace(/\s{2,}/g, ' ').trim()
+                filter['title'] = { $regex: titleName, $options: 'i' }
+            }       
 
             if (priceGreaterThan) {
-                if (validate.isValid(priceGreaterThan) || !validate.numCheck(priceGreaterThan)) {
+                if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
                     return res.status(400).send({ status: false, message: "not valid price" })
                 }
                 filter['price'] = { $gt: priceGreaterThan }
 
             }
             if (priceLessThan) {
-                if (validate.isValid(priceLessThan) || !validate.numCheck(priceLessThan)) {
+                if (validate.isValid(priceLessThan) || !validate.isValidPrice(priceLessThan)) {
                     return res.status(400).send({ status: false, message: "not valid price" })
                 }
                 filter['price'] = { $lt: priceLessThan }
@@ -151,7 +150,7 @@ exports.getProduct = async function (req, res) {
             }
         }
 
-        // .collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
+        //.collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
         let product = await productModel.find(filter).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
         if (product.length === 0) return res.status(404).send({ status: false, message: "No products found" })
         return res.status(200).send({ status: true, message: 'Success', data: product })
@@ -217,11 +216,8 @@ exports.updateProduct = async (req, res) => {
             let productImgUrl = await uploadFile(files[0]);
             data.productImage = productImgUrl;
         }
-        // ======================================================================================================
-        //validation if user can given is deleted true
-        // if (data.isDeleted || data.deletedAt || typeof (data.isDeleted) == "string" || typeof (data.deletedAt) == "string") { res.status(400).send({ status: false, message: "invalid request" }) }
-
-        // =================================================title validation===================================
+       
+        // =================================================title validation=============================================================
 
         if (data.title || data.title == "string") {
             if (validate.isValid(data.title)) {
@@ -268,16 +264,15 @@ exports.updateProduct = async (req, res) => {
         }
         // ==================================== free shipping validation========================
         if (data.isFreeShipping || typeof data.isFreeShipping == 'string') {
+            if (validate.isValid(data.isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not contain white spaces" });
             //if the user given any whitespace
             data.isFreeShipping = data.isFreeShipping.toLowerCase().trim();//trim the whitespaces
             if (data.isFreeShipping == 'true' || data.isFreeShipping == 'false') {
                 //convert from string to boolean
                 data.isFreeShipping = JSON.parse(data.isFreeShipping);
             } else {
-                return res.status(400).send({ status: false, message: "Enter a valid value for isFreeShipping" })
+                return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" })
             }
-
-            if (typeof data.isFreeShipping !== 'boolean') return res.status(400).send({ status: false, message: "Free shipping should be in boolean value" })//boolean 
         }
 
         // =============================style validation===========================================
