@@ -120,7 +120,8 @@ exports.getProduct = async function (req, res) {
                 filter['availableSizes'] = { $in: sizeArray }
             }
             if (!validate.isValid(name)) {
-                // const titleName = name.trim().split(" ").filter(word => word).join(" ") //problem not solved here
+                //const titleName = name.trim().split(" ").filter(word => word).join("") //problem not solved here
+                const titleName = name.replace(/ +/g,"")
                 filter['title'] = { $regex: name, $options: 'i' }
             }
 
