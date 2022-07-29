@@ -94,7 +94,8 @@ exports.createProduct = async (req, res) => {
         }
 
         let createProduct = await productModel.create(data);
-        return res.status(201).send({ status: true, message: "Success", data: createProduct })
+        return res.status(201).send({ status: true, message: "Success", data: createProduct });
+    }
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
