@@ -80,20 +80,11 @@ exports.createProduct = async (req, res) => {
         if (availableSizes) {
             let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
-<<<<<<< HEAD
         
         
         for (let i = 0; i < data.availableSizes.length; i++) {
             if (!validate.isValidSize(data.availableSizes[i])) {
                 return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
-=======
-
-
-            for (let i = 0; i < data.availableSizes.length; i++) {
-                if (!validate.isValidSize(data.availableSizes[i])) {
-                    return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" })
-                }
->>>>>>> eb47f117cd8fb1bbae5a5092eb512664e3693ddc
             }
         }
 
@@ -113,7 +104,7 @@ exports.createProduct = async (req, res) => {
 
 // -------------------------------------------- GET PRODUCTS ---------------------------------------------
 
-exports.getProduct = async function (req, res) {
+exports.getProduct = async (req, res) => {
     try {
         let userQuery = req.query
         let checkquery = validate.anyObjectKeysEmpty(userQuery)
@@ -224,16 +215,8 @@ exports.updateProduct = async (req, res) => {
             let productImgUrl = await uploadFile(files[0]);
             data.productImage = productImgUrl;
         }
-<<<<<<< HEAD
        
         // =================================================title validation=============================================================
-=======
-        // ======================================================================================================
-        //validation if user can given is deleted true
-        // if (data.isDeleted || data.deletedAt || typeof (data.isDeleted) == "string" || typeof (data.deletedAt) == "string") { res.status(400).send({ status: false, message: "invalid request" }) }
-
-        // =================================================title validation===================================
->>>>>>> eb47f117cd8fb1bbae5a5092eb512664e3693ddc
 
         if (data.title || data.title == "string") {
             if (validate.isValid(data.title)) {
