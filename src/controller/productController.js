@@ -50,7 +50,7 @@ exports.createProduct = async (req, res) => {
 
 
         if (isFreeShipping || typeof isFreeShipping == 'string') {
-            if (validate.isValid(isFreeShipping)) return res.status(400).send({ status: false, message: " isFreeShipping should not be empty" });
+            if (validate.isValid(isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not contain white spaces" });
             if (typeof data.isFreeShipping == 'string') {
                 //converting it to lowercase and removing white spaces
                 data.isFreeShipping = isFreeShipping.toLowerCase().trim();
@@ -58,7 +58,7 @@ exports.createProduct = async (req, res) => {
                     //converting from string to boolean
                     data.isFreeShipping = JSON.parse(data.isFreeShipping);
                 } else {
-                    return res.status(400).send({ status: false, message: "Enter a boolean value for isFreeShipping" });
+                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
                 }
             }
         }
@@ -121,9 +121,9 @@ exports.getProduct = async function (req, res) {
                 filter['availableSizes'] = { $in: sizeArray }
             }
             if (!validate.isValid(name)) {
-               // const titleName = name.trim().split(" ").filter(word => word).join(" ") //problem not solved here
-                filter['title'] = { $regex: name, $options: 'i' }
-            }
+                const titleName = name.replace(/\s{2,}/g, ' ').trim()
+                filter['title'] = { $regex: titleName, $options: 'i' }
+            }       
 
             if (priceGreaterThan) {
                 if (validate.isValid(priceGreaterThan) || !validate.numCheck(priceGreaterThan)) {
@@ -151,7 +151,7 @@ exports.getProduct = async function (req, res) {
             }
         }
 
-        // .collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
+        //.collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
         let product = await productModel.find(filter).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
         if (product.length === 0) return res.status(404).send({ status: false, message: "No products found" })
         return res.status(200).send({ status: true, message: 'Success', data: product })
@@ -217,10 +217,7 @@ exports.updateProduct = async (req, res) => {
             let productImgUrl = await uploadFile(files[0]);
             data.productImage = productImgUrl;
         }
-        // ==============================================================================================================
-        //validation if user can given is deleted true
-       // if (data.isDeleted || data.deletedAt || typeof (data.isDeleted) == "string" || typeof (data.deletedAt) == "string") { res.status(400).send({ status: false, message: "invalid request" }) }
-
+       
         // =================================================title validation=============================================================
 
         if (data.title || data.title == "string") {
@@ -268,16 +265,15 @@ exports.updateProduct = async (req, res) => {
         }
         // ================================================= free shipping validation=============================================================
         if (data.isFreeShipping || typeof data.isFreeShipping == 'string') {
+            if (validate.isValid(data.isFreeShipping)) return res.status(400).send({ status: false, message: "isFreeShipping should not contain white spaces" });
             //if the user given any whitespace
             data.isFreeShipping = data.isFreeShipping.toLowerCase().trim();//trim the whitespaces
             if (data.isFreeShipping == 'true' || data.isFreeShipping == 'false') {
                 //convert from string to boolean
                 data.isFreeShipping = JSON.parse(data.isFreeShipping);
             } else {
-                return res.status(400).send({ status: false, message: "Enter a valid value for isFreeShipping" })
+                return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" })
             }
-
-            // if (typeof data.isFreeShipping !== 'boolean') return res.status(400).send({ status: false, message: "Free shipping should be in boolean value" })//boolean 
         }
 
         // =================================================style validation=============================================================
