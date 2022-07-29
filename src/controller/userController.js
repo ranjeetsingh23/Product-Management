@@ -85,14 +85,16 @@ exports.createUser = async (req, res) => {
             return res.status(400).send({ status: false, message: "Address is in wrong format" })
         };
 
+      //  if(/''||{}||""/.test(data.address)) return res.send({message: "Wrong format"})
+
         //validation for shipping address
         if (sAddress && typeof sAddress != "object") {
             return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
         };
-        if (data.address && sAddress && sAddress.street && validate.isValid(sAddress.street)) {
+        if (data.address && sAddress && sAddress.street && (validate.isValid(sAddress.street))) {
             return res.status(400).send({ status: false, message: "Street is in wrong format" })
         };
-        if (data.address && sAddress && sAddress.city && validate.isValid(sAddress.city)) {
+        if (data.address && sAddress && sAddress.city && (validate.isValid(sAddress.city))) {
             return res.status(400).send({ status: false, message: "City is in wrong format" })
         };
         if (data.address && sAddress && sAddress.pincode && validate.isValid(sAddress.pincode)) {

@@ -47,11 +47,6 @@ exports.isValidString = (String) => {
     return ['S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'].includes(sizes);
   }
 
-  exports.numCheck = (num) => {
-    let numCheck = /^[\0-9]*$/
-    return numCheck.test(num)
-}
-
 exports.anyObjectKeysEmpty = (value) =>{ 
   let obArr = Object.keys(value)
   let str = ''
@@ -66,7 +61,5 @@ exports.anyObjectKeysEmpty = (value) =>{
 }
 
 
-// exports.isValidImage = (img) => {
-//   return /^(([a-zA-Z]:)|(\\{2}\w+)\$?)(\\(\w[\w].*))+(.jpeg|.JPEG|.JPG|.jpg|.gif|.GIF|.png|.PNG)$/.test(img);
-// }
+
 

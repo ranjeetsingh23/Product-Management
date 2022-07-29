@@ -126,14 +126,14 @@ exports.getProduct = async function (req, res) {
             }       
 
             if (priceGreaterThan) {
-                if (validate.isValid(priceGreaterThan) || !validate.numCheck(priceGreaterThan)) {
+                if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
                     return res.status(400).send({ status: false, message: "not valid price" })
                 }
                 filter['price'] = { $gt: priceGreaterThan }
 
             }
             if (priceLessThan) {
-                if (validate.isValid(priceLessThan) || !validate.numCheck(priceLessThan)) {
+                if (validate.isValid(priceLessThan) || !validate.isValidPrice(priceLessThan)) {
                     return res.status(400).send({ status: false, message: "not valid price" })
                 }
                 filter['price'] = { $lt: priceLessThan }
