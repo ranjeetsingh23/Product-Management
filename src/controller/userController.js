@@ -65,17 +65,17 @@ exports.createUser = async (req, res) => {
         if (!validate.isValidPwd(password)) return res.status(400).send({ status: false, message: "Password should be between 8 and 15 character" });
 
         //checking for image link
-        if (files.length == 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
+        if (files.length === 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
 
         //checking for address
         if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
 
-        try {
+        
             data.address = JSON.parse(data.address)
-        } catch (error) {
-            return res.status(400).send({ status: false, message: "Pincode cannot start with 0 or Pincode cannot be empty" })
-        }
+        // } catch (error) {
+        //     return res.status(400).send({ status: false, message: "Pincode cannot start with 0 or Pincode cannot be empty" })
+        // }
         let sAddress = data.address.shipping;
         let bAddress = data.address.billing;
 
@@ -100,7 +100,7 @@ exports.createUser = async (req, res) => {
         if (data.address && sAddress && sAddress.pincode && validate.isValid(sAddress.pincode)) {
             return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
         };
-        if (data.address && sAddress && sAddress.pincode && !validate.isValidPincode(sAddress.pincode)) {
+        if (sAddress.pincode && !validate.isValidPincode(sAddress.pincode)) {
             return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
         };
 

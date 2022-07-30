@@ -156,7 +156,6 @@ exports.getProduct = async (req, res) => {
         return res.status(200).send({ status: true, message: 'Success', data: product })
 
     } catch (error) {
-        console.log(error.message);
         return res.status(500).send({ status: false, message: error.message });
     }
 }
