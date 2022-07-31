@@ -199,10 +199,10 @@ exports.updateProduct = async (req, res) => {
         if (!validate.isValidObjectId(ProductId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
         let getId = await productModel.findOne({ _id: ProductId })
         if (!getId) {
-            return res.status(404).send({ status: false, message: "Product Not Found for the request id" })
+            return res.status(404).send({ status: false, message: "Product Not Found for the request id" });
         }
         if (getId.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "Product is already deleted " })
+            return res.status(404).send({ status: false, message: "Product is already deleted " });
         }
         let data = req.body;
         let files = req.files;
