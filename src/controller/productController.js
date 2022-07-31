@@ -208,7 +208,7 @@ exports.updateProduct = async (req, res) => {
         let files = req.files;
         // ===============================file validation=====================================
 
-        if (validate.isValidBody(data)) { res.status(400).send({ status: false, message: "Body cannot be empty " }) }
+        if (validate.isValidBody(data))  return res.status(400).send({ status: false, message: "Body cannot be empty " }) 
         //checking for product image
         if (files && files.length > 0) {
             //uploading the product image

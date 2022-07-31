@@ -32,7 +32,8 @@ exports.isValidString = (String) => {
   
   exports.isValidPincode = (num) => {
    // return /^[0-9]{6}$/.test(num);
-   return /^[1-9][0-9][0-9][0-9][0-9][0-9]$/g.test(num)
+   //return /^[1-9][0-9][0-9][0-9][0-9][0-9]$/g.test(num)
+   return /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(num)
 
   }
 
@@ -62,7 +63,9 @@ exports.anyObjectKeysEmpty = (value) =>{
   return str==""?false:str
 }
 
-
+exports.isvalidCity = function (city){
+  return /^[a-zA-z',.\s-]{1,25}$/.test(city)
+}
 
 
 // const isValidCity = (value)=>{

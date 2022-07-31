@@ -11,7 +11,7 @@ exports.createUser = async (req, res) => {
         let data = req.body;
         let files = req.files;
 
-        let { fname, lname, email, password, phone } = data;
+        let { fname, lname, email, password, phone, address } = data;
 
         //validationg the request body
         if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to create your account" });
@@ -69,58 +69,94 @@ exports.createUser = async (req, res) => {
 
 
         //checking for address
-        if (!data.address) return res.status(400).send({ status: false, message: "Address is required" });
+        if (!address) return res.status(400).send({ status: false, message: "Address is required" });
 
-        
+       // try {
             data.address = JSON.parse(data.address)
         // } catch (error) {
-        //     return res.status(400).send({ status: false, message: "Pincode cannot start with 0 or Pincode cannot be empty" })
+        //     return res.status(400).send({ status: false, message: "Pincode cannot start with 0" })
         // }
-        let sAddress = data.address.shipping;
-        let bAddress = data.address.billing;
 
+        let { shipping, billing } = data.address
         //validating the address 
         if (data.address && typeof data.address != "object") {
-            console.log(typeof data.address)
+            console.log(typeof address)
             return res.status(400).send({ status: false, message: "Address is in wrong format" })
         };
 
-      //  if(/''||{}||""/.test(data.address)) return res.send({message: "Wrong format"})
 
-        //validation for shipping address
-        if (sAddress && typeof sAddress != "object") {
-            return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
-        };
-        if (data.address && sAddress && sAddress.street && (validate.isValid(sAddress.street))) {
-            return res.status(400).send({ status: false, message: "Street is in wrong format" })
-        };
-        if (data.address && sAddress && sAddress.city && (validate.isValid(sAddress.city))) {
-            return res.status(400).send({ status: false, message: "City is in wrong format" })
-        };
-        if (data.address && sAddress && sAddress.pincode && validate.isValid(sAddress.pincode)) {
-            return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
-        };
-        if (sAddress.pincode && !validate.isValidPincode(sAddress.pincode)) {
-            return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
-        };
+        if (shipping) {
+            //validation for shipping address
+            if (typeof shipping != "object") {
+                return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
+            };
+            if (!shipping.street || validate.isValid(shipping.street)) {
+                return res.status(400).send({ status: false, message: "Street is required" })
+            }
+            if (shipping.street && typeof shipping.street !== 'string') {
+                return res.status(400).send({ status: false, message: "Street is in wrong format" })
+            };
+            if (!shipping.city || validate.isValid(shipping.city)) {
+                return res.status(400).send({ status: false, message: "City is required" })
+            }
+            if (shipping.city && typeof shipping.city !== 'string') {
+                return res.status(400).send({ status: false, message: "City is in wrong format" })
+            };
+            if (!validate.isvalidCity(shipping.city)) {
+                return res.status(400).send({ status: false, message: "City name should only contain alphabets." });
+              }
+            if (!shipping.pincode) {
+                return res.status(400).send({ status: false, message: "Pincode is required" })
+            }
+            if (validate.isValid(shipping.pincode)) {
+                return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
+            };
+
+            if (!validate.isValidPincode(shipping.pincode)) {
+                return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
+            };
+
+        } else {
+            return res.status(400).send({ status: false, message: "Shipping address is required" })
+        }
 
         //validation for billing address
-        if (bAddress && typeof bAddress != "object") {
-            return res.status(400).send({ status: false, message: "Billing Address is in wrong format" })
-        };
-        if (data.address && bAddress && bAddress.street && validate.isValid(bAddress.street)) {
-            return res.status(400).send({ status: false, message: "Street is in wrong format" })
-        };
-        if (data.address && bAddress && bAddress.city && validate.isValid(bAddress.city)) {
-            return res.status(400).send({ status: false, message: "City is in wrong format" })
-        };
-        if (data.address && bAddress && bAddress.pincode && validate.isValid(bAddress.pincode)) {
-            return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
-        };
-        if (data.address && bAddress && bAddress.pincode && !validate.isValidPincode(bAddress.pincode)) {
-            return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
-        };
+        if (billing) {
 
+            //validation for billing address
+            if (typeof billing !== "object") {
+                return res.status(400).send({ status: false, message: "billing Address is in wrong format" })
+            };
+            if (!billing.street || validate.isValid(billing.street)) {
+                return res.status(400).send({ status: false, message: "Street is required" })
+            }
+            if (billing.street && typeof billing.street != 'string') {
+                return res.status(400).send({ status: false, message: "Street is in wrong format" })
+            };
+            if (!billing.city || validate.isValid(billing.city)) {
+                return res.status(400).send({ status: false, message: "City is required" })
+            }
+            if (billing.city && typeof billing.city != 'string') {
+                return res.status(400).send({ status: false, message: "City is in wrong format" })
+            };
+            if (!validate.isvalidCity(billing.city)) {
+                        return res.status(400).send({ status: false, message: "City name should only contain alphabets." });
+                }
+            if (!billing.pincode) {
+                return res.status(400).send({ status: false, message: "Pincode is required" })
+            }
+            if (validate.isValid(billing.pincode)) {
+                return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
+            };
+
+            if (!validate.isValidPincode(billing.pincode)) {
+                return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
+            };
+
+        } else {
+            return res.status(400).send({ status: false, message: "billing address is required" })
+        }
+       
         //hashing password with bcrypt
         data.password = await bcrypt.hash(password, 10);
 
@@ -258,92 +294,98 @@ exports.updateUser = async (req, res) => {
             //hashing password with bcrypt
             data.password = await bcrypt.hash(password, 10);
         }
+              
 
-        if (data.address) {
+        //address not working
+      //  if (data.address) {
 
-            //converting string into object
-            try {
-                data.address = JSON.parse(data.address)
-            } catch (error) {
-                return res.status(400).send({ status: false, message: "Pincode cannot start with 0 or Pincode cannot be empty" })
-            }
+        //     //converting string into object
+        //     //try {
+        //         data.address = JSON.parse(data.address)
+        //     // } catch (error) {
+        //     //     return res.status(400).send({ status: false, message: "Pincode cannot start with 0 or Pincode cannot be empty" })
+        //     // }
 
-            //validating the address 
-            if (typeof data.address != "object") {
-                return res.status(400).send({ status: false, message: "Address is in wrong format" })
-            }
+        //     //validating the address 
+        //     if (typeof data.address != "object") {
+        //         return res.status(400).send({ status: false, message: "Address is in wrong format" })
+        //     }
 
-            //tempAddress to store updated fields
-            let tempAddress = JSON.parse(JSON.stringify(userProfile.address));
-            if (data.address.shipping) {
-                //validation for shipping address
-                if (typeof data.address.shipping != "object") {
-                    return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
-                };
+        //     //tempAddress to store updated fields
+        //     let tempAddress = JSON.parse(JSON.stringify(userProfile.address));
+        //     if (data.address.shipping) {
+        //         //validation for shipping address
+               
+        //         if (typeof data.address.shipping != "object") {
+        //             return res.status(400).send({ status: false, message: "Shipping Address is in wrong format" })
+        //         };
 
-                //checking for shipping street and storing it in temp address
-                if (data.address.shipping.street) {
-                    if (validate.isValid(data.address.shipping.street)) {
-                        return res.status(400).send({ status: false, message: "Street is in wrong format" })
-                    };
-                    tempAddress.shipping.street = data.address.shipping.street;
-                }
+        //         //checking for shipping street and storing it in temp address
+        //         if (data.address.shipping.street) {
+        //             if (typeof data.address.shipping.city === 'string' && data.address.shipping.city.length ) {
+        //                 return res.status(400).send({ status: false, message: "Street address cannot be empty" })
+        //             }
+        //             if (typeof data.address.shipping.city != 'string') {
+        //                 return res.status(400).send({ status: false, message: "Street is in wrong format" })
+        //             };
+        //             tempAddress.shipping.street = data.address.shipping.street;
+        //         }
 
-                //checking for shipping city and storing it in temp address
-                if (data.address.shipping.city) {
-                    if (validate.isValid(data.address.shipping.city)) {
-                        return res.status(400).send({ status: false, message: "City is in wrong format" })
-                    };
-                    tempAddress.shipping.city = data.address.shipping.city;
-                }
+        //         //checking for shipping city and storing it in temp address
+        //         if (data.address.shipping.city) {
+        //             if (typeof data.address.shipping.city != 'string') {
+        //                 return res.status(400).send({ status: false, message: "City is in wrong format" })
+        //             };
+        //             tempAddress.shipping.city = data.address.shipping.city;
+        //         }
 
-                if (data.address.shipping.pincode) {
-                    if (validate.isValid(data.address.shipping.pincode)) {
-                        return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
-                    };
-                    if (!validate.isValidPincode(data.address.shipping.pincode)) {
-                        return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
-                    };
-                    tempAddress.shipping.pincode = data.address.shipping.pincode;
-                }
-            }
-            //for billing
-            if (data.address.billing) {
+        //         if (data.address.shipping.pincode) {
+        //             if (validate.isValid(data.address.shipping.pincode)) {
+        //                 return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
+        //             };
+        //             if (!validate.isValidPincode(data.address.shipping.pincode)) {
+        //                 return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
+        //             };
+        //             tempAddress.shipping.pincode = data.address.shipping.pincode;
+        //         }
+        //     }
+        //     //for billing
+        //     if (data.address.billing) {
 
-                //validation for billing address
-                if (typeof data.address.billing != "object") {
-                    return res.status(400).send({ status: false, message: "billing Address is in wrong format" })
-                };
+        //         //validation for billing address
+        //         if (typeof data.address.billing != "object") {
+        //             return res.status(400).send({ status: false, message: "billing Address is in wrong format" })
+        //         };
 
-                //checking for billing street and storing it in temp address
-                if (data.address.billing.street) {
-                    if (validate.isValid(data.address.billing.street)) {
-                        return res.status(400).send({ status: false, message: "Street is in wrong format" })
-                    };
-                    tempAddress.billing.street = data.address.billing.street;
-                }
+        //         //checking for billing street and storing it in temp address
+        //         if (data.address.billing.street) {
+        //             if (typeof data.address.billing.street !== 'string') {
+        //                 return res.status(400).send({ status: false, message: "Street is in wrong format" })
+        //             };
+        //             tempAddress.billing.street = data.address.billing.street;
+        //         }
 
-                //checking for billing city and storing it in temp address
-                if (data.address.billing.city) {
-                    if (validate.isValid(data.address.billing.city)) {
-                        return res.status(400).send({ status: false, message: "City is in wrong format" })
-                    };
-                    tempAddress.billing.city = data.address.billing.city;
-                }
+        //         //checking for billing city and storing it in temp address
+        //         if (data.address.billing.city) {
+        //             if (typeof data.address.billing.city !== 'string') {
+        //                 return res.status(400).send({ status: false, message: "City is in wrong format" })
+        //             };
+        //             tempAddress.billing.city = data.address.billing.city;
+        //         }
 
-                if (data.address.billing.pincode) {
-                    if (validate.isValid(data.address.billing.pincode)) {
-                        return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
-                    };
-                    if (!validate.isValidPincode(data.address.billing.pincode)) {
-                        return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
-                    };
-                    tempAddress.billing.pincode = data.address.billing.pincode;
-                }
-            }
-
-            data.address = tempAddress;   //storing updated adress in data
-        }
+        //         if (data.address.billing.pincode) {
+        //             if (validate.isValid(data.address.billing.pincode)) {
+        //                 return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
+        //             };
+        //             if (!validate.isValidPincode(data.address.billing.pincode)) {
+        //                 return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
+        //             };
+        //             tempAddress.billing.pincode = data.address.billing.pincode;
+        //         }
+        //     }
+                       
+        //     data.address = tempAddress;   //storing updated adress in data
+        // }
 
         let updatedUser = await userModel.findOneAndUpdate(
             { _id: userId },
