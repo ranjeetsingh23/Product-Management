@@ -8,7 +8,7 @@ const cartModel = require('../model/cartModel');
 
 // ------------------------------------------Create Cart Api
 
-exports.createCart = async function (req, res) {
+exports.createCart = async (req, res) => {
     try {
 
         let data = req.body;
