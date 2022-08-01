@@ -330,7 +330,7 @@ exports.updateUser = async (req, res) => {
 
                 
                 if (!validate.isValidPincode(shipping.pincode)) {
-                    return res.status(400).send({ status: false, message: "plz enter valid pincode" });
+                    return res.status(400).send({ status: false, message: "please enter valid pincode" });
                 }
             }
 
@@ -355,10 +355,9 @@ exports.updateUser = async (req, res) => {
                 }
 
                 if (!validate.isValidPincode(billing.pincode)) {
-                    return res.status(400).send({ status: false, message: "plz enter valid billing pincode"});
+                    return res.status(400).send({ status: false, message: "please enter valid billing pincode"});
                 }
             }
-            data.address = JSON.parse(data.address);
         }
 
         let updatedUser = await userModel.findOneAndUpdate(
