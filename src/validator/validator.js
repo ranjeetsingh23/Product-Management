@@ -31,8 +31,6 @@ exports.isValidString = (String) => {
   }
   
   exports.isValidPincode = (num) => {
-   // return /^[0-9]{6}$/.test(num);
-   //return /^[1-9][0-9][0-9][0-9][0-9][0-9]$/g.test(num)
    return /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(num);
 
   }
@@ -73,14 +71,3 @@ exports.isEmpty = function (value) {
    return false;
 }
 
-
-
-// const isValidCity = (value)=>{
-//   let cityPattern = /^[a-zA-Z]+$/g
-
-//   if(cityPattern.test(value)){
-//       return true
-//   }else{
-//       return false
-//   }
-// }
