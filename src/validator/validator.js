@@ -26,7 +26,7 @@ exports.isValidString = (String) => {
   
   exports.isValidPwd = (Password) => {
     if(Password.length < 8 || Password.length > 15){
-          return false
+          return false;
     }return true
   }
   
