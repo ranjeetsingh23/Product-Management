@@ -2,11 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require("../controller/userController");
 const productController = require("../controller/productController");
-<<<<<<< HEAD
 const cartController = require('../controller/cartController')
-=======
-const cartController = require("../controller/cartController");
->>>>>>> 69a1ccf754fe7e8465158a2fa1be2f30be39193d
 const mid = require("../middleware/auth")
 
 // ---------------------------------------- USER API's -------------------------------------------
