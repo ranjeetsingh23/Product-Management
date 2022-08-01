@@ -145,10 +145,10 @@ exports.updateCart = async (req, res) => {
             return res.status(400).send({ status: false, message: `No cart found with this ${userId} userId` });
         }
 
-        //checking if cart is emoty or not
-        if (cart.items.length == 0) {
-            return res.status(400).send({ status: false, message: "Cart is empty" });
-        }
+        // //checking if cart is emoty or not
+        // if (cart.items.length == 0) {
+        //     return res.status(400).send({ status: false, message: "Cart is empty" });
+        // }
 
         //
         if (validate.isValid(data)) {
@@ -186,9 +186,8 @@ exports.updateCart = async (req, res) => {
         }
 
         let productArr = cart.items.filter(x =>
-            x.productId.toString() == data.productId
+            x.productId.toString() == data.productId )
 
-        )
         if (productArr.length == 0) {
             return res.status(400).send({ status: false, message: "Product is not present in cart" })
         }
