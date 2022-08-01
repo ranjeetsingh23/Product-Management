@@ -18,9 +18,10 @@ let isEmpty = function (value) {
     if (typeof value === 'string' && value.trim().length === 0) return true;
     return false;
 }
-//Create Cart Api
+// ------------------------------------------Create Cart Api
+
 exports.createCart = async function (req, res) {
-    // try {
+    try {
 
     let data = JSON.parse(JSON.stringify(req.body));
     if (isValidRequestBody(data))
@@ -120,10 +121,10 @@ exports.createCart = async function (req, res) {
     let result = await cartModel.create(obj)
     // let result = await cartModel.findOne({ _id: cartId }).select({ "items._id": 0, __v: 0 })
     return res.status(201).send({ status: true, message: 'Success', data: result })
-    // }
-    // catch (err) {
-    //     return res.status(500).send({ status: false, err: err.message });
-    // }
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, err: err.message });
+    }
 }
 
 
@@ -148,7 +149,7 @@ exports.getCart = async (req, res) => {
 // ---------------------------- PUT /users/:userId/cart -------------------------------------------
 
 exports.updateCart = async (req, res) => {
-    // try{
+    try{
 
     let userId = req.params.userId;
     let data = req.body
@@ -163,7 +164,6 @@ exports.updateCart = async (req, res) => {
     if (cart.items.length == 0) {
         return res.status(400).send({ status: false, message: "Cart is empty" });
     }
-
 
     //
     if (validate.isValid(data)) {
@@ -202,7 +202,7 @@ exports.updateCart = async (req, res) => {
 
     let productArr = cart.items.filter(x =>
         x.productId.toString() == data.productId
-        //console.log(productArr)
+       
     )
     if (productArr.length == 0) {
         return res.status(400).send({ status: false, message: "Product is not present in cart" })
@@ -218,9 +218,9 @@ exports.updateCart = async (req, res) => {
     }
     return res.status(200).send({ status: true, message: "Data updated successfuly", data: cart })
 
-    // } catch(error){
-    //     return res.status(500).send({status: false, message: error.message})
-    // }
+    } catch(error){
+        return res.status(500).send({status: false, message: error.message})
+    }
 
 }
 
