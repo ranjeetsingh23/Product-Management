@@ -156,7 +156,6 @@ exports.getProduct = async (req, res) => {
         return res.status(200).send({ status: true, message: 'Success', data: product })
 
     } catch (error) {
-        console.log(error.message);
         return res.status(500).send({ status: false, message: error.message });
     }
 }
@@ -200,16 +199,16 @@ exports.updateProduct = async (req, res) => {
         if (!validate.isValidObjectId(ProductId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
         let getId = await productModel.findOne({ _id: ProductId })
         if (!getId) {
-            return res.status(404).send({ status: false, message: "Product Not Found for the request id" })
+            return res.status(404).send({ status: false, message: "Product Not Found for the request id" });
         }
         if (getId.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "Product is already deleted " })
+            return res.status(404).send({ status: false, message: "Product is already deleted " });
         }
         let data = req.body;
         let files = req.files;
         // ===============================file validation=====================================
 
-        if (validate.isValidBody(data)) { res.status(400).send({ status: false, message: "Body cannot be empty " }) }
+        if (validate.isValidBody(data))  return res.status(400).send({ status: false, message: "Body cannot be empty " }) 
         //checking for product image
         if (files && files.length > 0) {
             //uploading the product image

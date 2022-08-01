@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 
 exports.isValid = (value) => {
   if (typeof value === "undefined" || typeof value === "null") return true;
-  if (typeof value === "string" && value.trim().length == 0) return true;
-  if (typeof value === "object" && Object.keys(value).length == 0) return true;
+  if (typeof value === "string" && value.trim().length === 0) return true;
+  if (typeof value === "object" && Object.keys(value).length === 0) return true;
   return false;
 }
 
 
 exports.isValidBody = (reqBody) => {
-  return Object.keys(reqBody).length == 0;
+  return Object.keys(reqBody).length === 0;
 }
 
 exports.isValidString = (String) => {
@@ -31,7 +31,10 @@ exports.isValidString = (String) => {
   }
   
   exports.isValidPincode = (num) => {
-    return /^[0-9]{6}$/.test(num);
+   // return /^[0-9]{6}$/.test(num);
+   //return /^[1-9][0-9][0-9][0-9][0-9][0-9]$/g.test(num)
+   return /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(num);
+
   }
 
 
@@ -40,7 +43,7 @@ exports.isValidString = (String) => {
   }
 
   exports.isValidPrice = (price) => {
-    return /^[1-9]\d{0,7}(?:\.\d{1,2})?$/.test(price)
+    return /^[1-9]\d{0,7}(?:\.\d{1,2})?$/.test(price);
   }
   
   exports.isValidSize = (sizes) => {
@@ -60,6 +63,17 @@ exports.anyObjectKeysEmpty = (value) =>{
   return str==""?false:str
 }
 
+exports.isvalidCity = function (city){
+  return /^[a-zA-z',.\s-]{1,25}$/.test(city)
+}
 
 
+// const isValidCity = (value)=>{
+//   let cityPattern = /^[a-zA-Z]+$/g
 
+//   if(cityPattern.test(value)){
+//       return true
+//   }else{
+//       return false
+//   }
+// }
