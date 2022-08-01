@@ -37,6 +37,8 @@ router.get("/users/:userId/cart",mid.Authentication,mid.Authorization,cartContro
 
 router.put('/users/:userId/cart', cartController.updateCart)
 
+router.delete('/users/:userId/cart',mid.Authentication,mid.Authorization, cartController.deleteCart)
+
 
 
 // ---------------------------------------- ORDER API's -------------------------------------------
