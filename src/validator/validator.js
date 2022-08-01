@@ -67,6 +67,13 @@ exports.isvalidCity = function (city){
   return /^[a-zA-z',.\s-]{1,25}$/.test(city)
 }
 
+exports.isEmpty = function (value) {
+  if (typeof value === 'undefined' || value === null) return true;
+  if (typeof value === 'string' && value.trim().length === 0) return true;
+   return false;
+}
+
+
 
 // const isValidCity = (value)=>{
 //   let cityPattern = /^[a-zA-Z]+$/g
