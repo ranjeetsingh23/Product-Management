@@ -80,22 +80,22 @@ exports.createProduct = async (req, res) => {
         if (availableSizes) {
             let size = availableSizes.toUpperCase().split(",") //creating an array
             data.availableSizes = size;
-        
-        
-        for (let i = 0; i < data.availableSizes.length; i++) {
-            if (!validate.isValidSize(data.availableSizes[i])) {
-                return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
+
+
+            for (let i = 0; i < data.availableSizes.length; i++) {
+                if (!validate.isValidSize(data.availableSizes[i])) {
+                    return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
+                }
             }
-        }
 
-        if (installments || typeof installments == 'string') {
-            if (!validate.isValidString(installments)) return res.status(400).send({ status: false, message: "Installments should be in number" });
-            if (!validate.isValidPrice(installments)) return res.status(400).send({ status: false, message: "Installments should be valid" });
-        }
+            if (installments || typeof installments == 'string') {
+                if (!validate.isValidString(installments)) return res.status(400).send({ status: false, message: "Installments should be in number" });
+                if (!validate.isValidPrice(installments)) return res.status(400).send({ status: false, message: "Installments should be valid" });
+            }
 
-        let createProduct = await productModel.create(data);
-        return res.status(201).send({ status: true, message: "Success", data: createProduct });
-    }
+            let createProduct = await productModel.create(data);
+            return res.status(201).send({ status: true, message: "Success", data: createProduct });
+        }
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -122,7 +122,7 @@ exports.getProduct = async (req, res) => {
             if (!validate.isValid(name)) {
                 const titleName = name.replace(/\s{2,}/g, ' ').trim()
                 filter['title'] = { $regex: titleName, $options: 'i' }
-            }       
+            }
 
             if (priceGreaterThan) {
                 if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
@@ -163,7 +163,7 @@ exports.getProduct = async (req, res) => {
 
 // ----------------------------------- GET product/:productId -------------------------------------------
 
-exports.getProductById = async function (req, res) {
+exports.getProductById = async (req, res) => {
 
     try {
         let id = req.params.productId
@@ -195,7 +195,7 @@ exports.updateProduct = async (req, res) => {
     try {
         let ProductId = req.params.productId
 
-        
+
         if (!validate.isValidObjectId(ProductId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
         let getId = await productModel.findOne({ _id: ProductId })
         if (!getId) {
@@ -208,14 +208,14 @@ exports.updateProduct = async (req, res) => {
         let files = req.files;
         // ===============================file validation=====================================
 
-        if (validate.isValidBody(data))  return res.status(400).send({ status: false, message: "Body cannot be empty " }) 
+        if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Body cannot be empty " })
         //checking for product image
         if (files && files.length > 0) {
             //uploading the product image
             let productImgUrl = await uploadFile(files[0]);
             data.productImage = productImgUrl;
         }
-       
+
         // =================================================title validation=============================================================
 
         if (data.title || data.title == "string") {
