@@ -30,12 +30,15 @@ exports.createCart = async (req, res) => {
             quantity = 1
         }
         quantity = Number(quantity)
-        if (typeof quantity !== 'number' || isNaN(quantity))
+        if (quantity && typeof quantity != "number" || isNaN(quantity))
             return res.status(400).send({ status: false, message: "Quantity should be number" })
-        if (quantity < 1)
-            return res.status(400).send({ status: false, message: "Quantity cannot be less then 1" })
+
+        if (quantity < 1){
+            return res.status(400).send({ status: false, message: "Quantity cannot be less than 1" })
+        }
         if (!validate.isValidObjectId(productId))
             return res.status(400).send({ status: false, message: "Invalid product ID" })
+
         if (cartId) {
             if (!validate.isValidObjectId(cartId))
                 return res.status(400).send({ status: false, message: "Invalid cart ID" })
@@ -69,7 +72,7 @@ exports.createCart = async (req, res) => {
             let proId = validProduct._id.toString()
             for (let i = 0; i < productidincart.length; i++) {
                 let productfromitem = productidincart[i].productId.toString()
-            
+
 
                 //updates old product i.e QUANTITY
                 if (proId == productfromitem) {
@@ -138,7 +141,7 @@ exports.updateCart = async (req, res) => {
         if (validate.isValid(data)) {
             return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
         }
-       
+
         // checking if cart is present or not
         let cart = await cartModel.findOne({ userId: userId });
         if (!cart) {
