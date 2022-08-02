@@ -30,8 +30,8 @@ exports.createCart = async (req, res) => {
             quantity = 1
         }
         quantity = Number(quantity)
-        if (typeof quantity !== 'number')
-            return res.status(400).send({ status: false, message: "Quantity is number" })
+        if (typeof quantity !== 'number' || isNaN(quantity))
+            return res.status(400).send({ status: false, message: "Quantity should be number" })
         if (quantity < 1)
             return res.status(400).send({ status: false, message: "Quantity cannot be less then 1" })
         if (!validate.isValidObjectId(productId))
@@ -51,8 +51,6 @@ exports.createCart = async (req, res) => {
                 return res.status(404).send({ status: false, message: "Cart does not exists" })
         }
 
-
-
         //searching for product    
         let validProduct = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!validProduct) return res.status(404).send({ status: false, message: "No products found or product has been deleted" })
@@ -71,6 +69,7 @@ exports.createCart = async (req, res) => {
             let proId = validProduct._id.toString()
             for (let i = 0; i < productidincart.length; i++) {
                 let productfromitem = productidincart[i].productId.toString()
+            
 
                 //updates old product i.e QUANTITY
                 if (proId == productfromitem) {
@@ -79,7 +78,7 @@ exports.createCart = async (req, res) => {
                     productidincart[i].quantity = newquant
                     validCart.totalPrice = uptotal
                     await validCart.save();
-                    return res.status(200).send({ status: true, message: 'Success', data: validCart })
+                    return res.status(201).send({ status: true, message: 'Success', data: validCart })
                 }
             }
             //adds new product
@@ -89,7 +88,7 @@ exports.createCart = async (req, res) => {
             let count = validCart.totalItems
             validCart.totalItems = count + 1
             await validCart.save()
-            return res.status(200).send({ status: true, message: 'Success', data: validCart })
+            return res.status(201).send({ status: true, message: 'Success', data: validCart })
         }
 
         // 1st time cart
@@ -145,11 +144,6 @@ exports.updateCart = async (req, res) => {
             return res.status(400).send({ status: false, message: `No cart found with this ${userId} userId` });
         }
 
-        // //checking if cart is emoty or not
-        // if (cart.items.length == 0) {
-        //     return res.status(400).send({ status: false, message: "Cart is empty" });
-        // }
-
         //
         if (validate.isValid(data)) {
             return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
@@ -186,7 +180,7 @@ exports.updateCart = async (req, res) => {
         }
 
         let productArr = cart.items.filter(x =>
-            x.productId.toString() == data.productId )
+            x.productId.toString() == data.productId)
 
         if (productArr.length == 0) {
             return res.status(400).send({ status: false, message: "Product is not present in cart" })
@@ -239,7 +233,7 @@ exports.deleteCart = async (req, res) => {
         await cartModel.updateOne({ _id: findCart._id },
             { items: [], totalPrice: 0, totalItems: 0 });
 
-        return res.status(200).send({ status: false, message: "Deleted Sucessfully" });
+        return res.status(204).send({ status: false, message: "Deleted Sucessfully" });
 
 
     } catch (error) {
