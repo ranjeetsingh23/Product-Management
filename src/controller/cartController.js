@@ -138,16 +138,23 @@ exports.updateCart = async (req, res) => {
         let userId = req.params.userId;
         let data = req.body
 
+        if (validate.isValid(data)) {
+            return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
+        }
+        // if(!data.cartId){
+        //     return res.status(400).send({status: false, message: "Please Provide cart Id"})
+        // }
+
         // checking if cart is present or not
-        let cart = await cartModel.findOne({ userId: userId, _id: data.cartId });
+        let cart = await cartModel.findOne({ userId: userId });
         if (!cart) {
             return res.status(400).send({ status: false, message: `No cart found with this ${userId} userId` });
         }
 
-        //
-        if (validate.isValid(data)) {
-            return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
-        }
+        
+        // if (validate.isValid(data)) {
+        //     return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
+        // }
         if (data.totalPrice || data.totalItems || typeof data.totalPrice == "string" || typeof data.totalItems == "string") {
             return res.status(400).send({ status: false, message: "Cannot change or update total price or total Items" })
         }
@@ -159,7 +166,8 @@ exports.updateCart = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Provide Valid Cart Id" });
             }
             if (cart._id.toString() !== data.cartId) {
-                return res.status(400).send({ status: false, message: "cart Id is invalid. Please provide correct cart Id" })
+                //console.log(cart._id.toString())
+                return res.status(400).send({ status: false, message: `cart Id does not match with provided User ID ${userId}` })
             }
         }
         if (validate.isValid(data.productId)) {
@@ -172,7 +180,7 @@ exports.updateCart = async (req, res) => {
         if (!findProduct) {
             return res.status(404).send({ status: false, message: "No product found with this product Id" })
         }
-        if (data.removeProduct == "undefined") {
+        if (validate.isValid(data.removeProduct)) {
             return res.status(400).send({ status: false, message: "removeProduct is required" })
         }
         if (!(/0|1/.test(data.removeProduct))) {
@@ -224,7 +232,6 @@ exports.deleteCart = async (req, res) => {
 
         //checking if the cart is present with this userId or not
         let findCart = await cartModel.findOne({ userId: userId });
-        if (!findCart) return res.status(404).send({ status: false, message: `No cart found with this ${userId} userId` });
 
         if (findCart.items.length == 0) {
             return res.status(400).send({ status: false, message: "Cart is already empty" });
