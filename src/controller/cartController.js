@@ -240,7 +240,7 @@ exports.deleteCart = async (req, res) => {
         await cartModel.updateOne({ _id: findCart._id },
             { items: [], totalPrice: 0, totalItems: 0 });
 
-        return res.status(200).send({ status: false, message: "Deleted Sucessfully" });
+        return res.status(204).send({ status: false, message: "Deleted Sucessfully" });
 
 
     } catch (error) {
