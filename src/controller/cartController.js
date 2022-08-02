@@ -6,7 +6,7 @@ const cartModel = require('../model/cartModel');
 
 
 
-// ------------------------------------------Create Cart Api
+// ---------------------------------- Create Cart ------------------------------------------------------
 
 exports.createCart = async (req, res) => {
     try {
@@ -111,9 +111,7 @@ exports.createCart = async (req, res) => {
     }
 }
 
-
-
-// ----------------------------------- get cart
+// ---------------------------------- GET cart ---------------------------------------------------------
 exports.getCart = async (req, res) => {
     try {
         let userId = req.params.userId;
@@ -129,8 +127,7 @@ exports.getCart = async (req, res) => {
     }
 }
 
-
-// ---------------------------- PUT /users/:userId/cart -------------------------------------------
+// ---------------------------------- PUT /users/:userId/cart ------------------------------------------
 
 exports.updateCart = async (req, res) => {
     try {
@@ -141,20 +138,13 @@ exports.updateCart = async (req, res) => {
         if (validate.isValid(data)) {
             return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
         }
-        // if(!data.cartId){
-        //     return res.status(400).send({status: false, message: "Please Provide cart Id"})
-        // }
-
+       
         // checking if cart is present or not
         let cart = await cartModel.findOne({ userId: userId });
         if (!cart) {
             return res.status(400).send({ status: false, message: `No cart found with this ${userId} userId` });
         }
 
-        
-        // if (validate.isValid(data)) {
-        //     return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
-        // }
         if (data.totalPrice || data.totalItems || typeof data.totalPrice == "string" || typeof data.totalItems == "string") {
             return res.status(400).send({ status: false, message: "Cannot change or update total price or total Items" })
         }
@@ -166,7 +156,6 @@ exports.updateCart = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Provide Valid Cart Id" });
             }
             if (cart._id.toString() !== data.cartId) {
-                //console.log(cart._id.toString())
                 return res.status(400).send({ status: false, message: `cart Id does not match with provided User ID ${userId}` })
             }
         }
@@ -224,7 +213,7 @@ exports.updateCart = async (req, res) => {
 }
 
 
-// ---------------------------- DELETE /users/:userId/cart --------------------------------------
+// --------------------------------- DELETE /users/:userId/cart ---------------------------------------
 
 exports.deleteCart = async (req, res) => {
     try {
