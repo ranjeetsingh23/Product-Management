@@ -172,16 +172,16 @@ exports.getProductById = async (req, res) => {
         }
         let isValidProductId = await productModel.findById({ _id: id })
         if (!isValidProductId) {
-            return res.status(404).send({ status: false, message: "Plz enter valid product id" })
+            return res.status(404).send({ status: false, message: "Please enter valid product id" })
         }
         let isDeleted = await productModel.findOne({ _id: id, isDeleted: true });
 
         if (isDeleted) {
-            return res.status(404).send({ status: true, message: "product is already deleted" });
+            return res.status(404).send({ status: true, message: "Product is already deleted" });
 
         }
         let allProducts = await productModel.findOne({ _id: id, isDeleted: false }).select({ deletedAt: 0 })
-        return res.status(200).send({ status: true, message: "product found successfully", data: allProducts })
+        return res.status(200).send({ status: true, message: "Success", data: allProducts })
     }
     catch (err) {
         res.status(500).send({ status: false, message: err.message })

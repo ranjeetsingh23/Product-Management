@@ -204,7 +204,7 @@ exports.updateCart = async (req, res) => {
             cart.totalItems = cart.items.length
             cart.save()
         }
-        return res.status(200).send({ status: true, message: "Data updated successfuly", data: cart })
+        return res.status(200).send({ status: true, message: "Success", data: cart })
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
