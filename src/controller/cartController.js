@@ -26,16 +26,23 @@ exports.createCart = async (req, res) => {
         if (validate.isValid(productId))
             return res.status(400).send({ status: false, message: "Product Id is required" })
 
+        if(quantity < 1 && typeof quantity == "number"){
+            return res.status(400).send({status: false, message: "Value should not be less than 1"})
+        }
+
         if (!quantity) {
             quantity = 1
         }
         quantity = Number(quantity)
-        if (typeof quantity !== 'number' || isNaN(quantity))
+        if (quantity && typeof quantity != "number" || isNaN(quantity))
             return res.status(400).send({ status: false, message: "Quantity should be number" })
-        if (quantity < 1)
-            return res.status(400).send({ status: false, message: "Quantity cannot be less then 1" })
+
+        if (quantity < 1){
+            return res.status(400).send({ status: false, message: "Quantity cannot be less than 1" })
+        }
         if (!validate.isValidObjectId(productId))
             return res.status(400).send({ status: false, message: "Invalid product ID" })
+
         if (cartId) {
             if (!validate.isValidObjectId(cartId))
                 return res.status(400).send({ status: false, message: "Invalid cart ID" })
@@ -65,11 +72,11 @@ exports.createCart = async (req, res) => {
                     return res.status(403).send({ status: false, message: `Cart does not belong to ${validUser.fname} ${validUser.lname}` })
             }
             let productidincart = validCart.items
-            let uptotal = validCart.totalPrice + (validProduct.price * Number(quantity))
+            let uptotal = (validCart.totalPrice + (validProduct.price * Number(quantity))).toFixed(2)
             let proId = validProduct._id.toString()
             for (let i = 0; i < productidincart.length; i++) {
                 let productfromitem = productidincart[i].productId.toString()
-            
+
 
                 //updates old product i.e QUANTITY
                 if (proId == productfromitem) {
@@ -83,7 +90,7 @@ exports.createCart = async (req, res) => {
             }
             //adds new product
             validCart.items.push({ productId: productId, quantity: Number(quantity) })
-            let total = validCart.totalPrice + (validProduct.price * Number(quantity))
+            let total = (validCart.totalPrice + (validProduct.price * Number(quantity))).toFixed(2)
             validCart.totalPrice = total
             let count = validCart.totalItems
             validCart.totalItems = count + 1
@@ -92,7 +99,7 @@ exports.createCart = async (req, res) => {
         }
 
         // 1st time cart
-        let calprice = validProduct.price * Number(quantity)
+        let calprice = (validProduct.price * Number(quantity)).toFixed(2)
         let obj = {
             userId: userId,
             items: [{
@@ -138,7 +145,7 @@ exports.updateCart = async (req, res) => {
         if (validate.isValid(data)) {
             return res.status(400).send({ status: false, message: "Please provide details to remove product from cart " });
         }
-       
+
         // checking if cart is present or not
         let cart = await cartModel.findOne({ userId: userId });
         if (!cart) {
@@ -187,7 +194,8 @@ exports.updateCart = async (req, res) => {
 
         if (data.removeProduct == 0) {
 
-            cart.totalPrice = cart.totalPrice - findProduct.price * cart.items[index].quantity.toFixed(2)
+            cart.totalPrice = (cart.totalPrice - (findProduct.price * cart.items[index].quantity)).toFixed(2)
+            //cart.totalPrice.tofixed(2)
             cart.items.splice(index, 1)
             cart.totalItems = cart.items.length
             cart.save()
@@ -196,7 +204,7 @@ exports.updateCart = async (req, res) => {
         if (data.removeProduct == 1) {
 
             cart.items[index].quantity -= 1;
-            cart.totalPrice = cart.totalPrice - findProduct.price.toFixed(2)
+            cart.totalPrice = (cart.totalPrice - findProduct.price).toFixed(2)
             if (cart.items[index].quantity == 0) {
 
                 cart.items.splice(index, 1)
@@ -213,7 +221,7 @@ exports.updateCart = async (req, res) => {
 }
 
 
-// --------------------------------- DELETE /users/:userId/cart ---------------------------------------
+// ---------------------------------- DELETE /users/:userId/cart ---------------------------------------
 
 exports.deleteCart = async (req, res) => {
     try {
