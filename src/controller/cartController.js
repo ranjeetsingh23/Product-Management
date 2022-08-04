@@ -195,7 +195,6 @@ exports.updateCart = async (req, res) => {
         if (data.removeProduct == 0) {
 
             cart.totalPrice = (cart.totalPrice - (findProduct.price * cart.items[index].quantity)).toFixed(2)
-            //cart.totalPrice.tofixed(2)
             cart.items.splice(index, 1)
             cart.totalItems = cart.items.length
             cart.save()
