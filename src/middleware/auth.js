@@ -14,7 +14,8 @@ exports.Authentication = async (req, res, next) => {
         let token = bearerToken[1];
         jwt.verify(token, "Secret", function (error,data) {
           if(error) {
-            return res.status(400).send({ status: false, message: error.message });
+
+            return res.status(401).send({ status: false, message: error.message });
           }else {
             req.decodedToken = data
             next()

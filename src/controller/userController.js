@@ -13,6 +13,8 @@ exports.createUser = async (req, res) => {
 
         let { fname, lname, email, password, phone, address } = data;
 
+        
+
         //validationg the request body
         if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to create your account" });
 
@@ -39,7 +41,7 @@ exports.createUser = async (req, res) => {
         if (!email) return res.status(400).send({ status: false, message: "User Email-id is required" });
 
         //validating user email-id
-        if (!validate.isValidEmail(email)) return res.status(400).send({ status: false, message: "Please Enter a valid Email-id" });
+        if (!validate.isValidEmail(email.trim())) return res.status(400).send({ status: false, message: "Please Enter a valid Email-id" });
 
 
         //checking if email already exist or not
@@ -51,7 +53,7 @@ exports.createUser = async (req, res) => {
         if (!phone) return res.status(400).send({ status: false, message: "User Phone number is required" });
 
         //validating user phone
-        if (!validate.isValidPhone(phone)) return res.status(400).send({ status: false, message: "Please Enter a valid Phone number" });
+        if (!validate.isValidPhone(phone.trim())) return res.status(400).send({ status: false, message: "Please Enter a valid Phone number" });
 
         //checking if phone already exist or not
         let duplicatePhone = await userModel.findOne({ phone: phone })
@@ -62,22 +64,20 @@ exports.createUser = async (req, res) => {
         if (!password) return res.status(400).send({ status: false, message: "Password is required" });
 
         //validating user password
-        if (!validate.isValidPwd(password)) return res.status(400).send({ status: false, message: "Password should be between 8 and 15 character" });
+        if (!validate.isValidPwd(password)) return res.status(400).send({ status: false, message: "Password should be between 8 and 15 character and it should be alpha numeric" });
 
         //checking for image link
-        if (files.length === 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
+         if (files.length === 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
 
         //checking for address
         if (!address) return res.status(400).send({ status: false, message: "Address is required" });
 
-       // try {
-            data.address = JSON.parse(data.address)
-        // } catch (error) {
-        //     return res.status(400).send({ status: false, message: "Pincode cannot start with 0" })
-        // }
+       
+            data.address = JSON.parse(data.address);
+       
 
-        let { shipping, billing } = data.address
+        let { shipping, billing } = data.address;
         //validating the address 
         if (data.address && typeof data.address != "object") {
             console.log(typeof address)
@@ -193,7 +193,7 @@ exports.userLogin = async (req, res) => {
         if (!email)
             return res.status(400).send({ status: false, message: "user Email is required" })
 
-
+            if (validate.isValid(email)) return res.status(400).send({ status: false, message: "Email cannot be empty" });
         //email and password check from db
         let user = await userModel.findOne({ email: email });
         if (!user)
@@ -201,6 +201,9 @@ exports.userLogin = async (req, res) => {
         //password is required
         if (!password)
             return res.status(400).send({ status: false, message: "user password is required" })
+             
+        if (validate.isValid(password)) return res.status(400).send({ status: false, message: "Password cannot be empty" });
+
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(401).send({ status: false, message: "Incorrect password" })
 

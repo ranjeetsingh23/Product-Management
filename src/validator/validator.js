@@ -25,9 +25,9 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-    if(Password.length < 8 || Password.length > 15){
-          return false;
-    }return true
+     return /^(?!.* )(?=.*\d)(?=.*[a-zA-Z]).{8,15}$/.test(Password)
+
+   
   }
   
   exports.isValidPincode = (num) => {
@@ -65,9 +65,5 @@ exports.isvalidCity = function (city){
   return /^[a-zA-z',.\s-]{1,25}$/.test(city)
 }
 
-exports.isEmpty = function (value) {
-  if (typeof value === 'undefined' || value === null) return true;
-  if (typeof value === 'string' && value.trim().length === 0) return true;
-   return false;
-}
+
 
