@@ -44,9 +44,9 @@ router.delete('/users/:userId/cart',mid.Authentication,mid.Authorization, cartCo
 
 // ---------------------------------------- ORDER API's -------------------------------------------
 
-router.post("/users/:userId/order",mid.Authentication,mid.Authorization,orderController.createOrder)
+router.post("/users/:userId/orders",mid.Authentication,mid.Authorization,orderController.createOrder)
 
-router.put("/users/:userId/order",mid.Authentication,mid.Authorization,orderController.updateOrder)
+router.put("/users/:userId/orders",mid.Authentication,mid.Authorization,orderController.updateOrder)
 
 
 

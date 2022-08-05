@@ -46,20 +46,33 @@ exports.createOrder = async (req, res) => {
         if (findCart.items.length === 0)
             return res.status(400).send({ status: false, message: "No Item in Cart" });
 
-        let validStatus = ['pending', 'completed', 'cancelled']; //validating the status
+            let validStatus = ['pending', 'completed', 'cancelled']; //validating the status
 
-        if (status) {
-            //checking if the status is valid
-            if (!validStatus.includes(status))
-                return res.status(400).send({ status: false, message: "Status should be one of 'pending', 'completed', 'cancelled'" });
-        }
-
-        let validCancel = ['true', 'false'];
-        if (cancellable) {
-            if (!validCancel.includes(cancellable)) {
-                return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" })
+            if (status || typeof status == "string") {
+                //checking if the status is valid
+                if(validate.isValid(status)){
+                    return res.status(400).send({ status: false, message: " Please provide status"})
+                }
+                if (!validStatus.includes(status))
+                    return res.status(400).send({ status: false, message: "Status should be one of 'pending', 'completed', 'cancelled'" });
             }
-        }
+    
+    
+    
+            if (cancellable || typeof cancellable == 'string') {
+                if (validate.isValid(cancellable)) 
+                    return res.status(400).send({ status: false, message: "cancellable should not contain white spaces" });
+                if (typeof cancellable == 'string') {
+                    //converting it to lowercase and removing white spaces
+                    cancellable = cancellable.toLowerCase().trim();
+                    if (cancellable == 'true' || cancellable == 'false') {
+                        //converting from string to boolean
+                        cancellable = JSON.parse(cancellable);
+                    } else {
+                        return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
+                    }
+                }
+            }
 
         let totalQuantity = 0;
         for (let i = 0; i < findCart.items.length; i++)
@@ -96,6 +109,12 @@ exports.updateOrder = async (req, res) => {
         if (!validate.isValidObjectId(userId)) {
             return res.status(400).send({ status: false, message: "Please provide valid user Id" });
         }
+
+        let findCart = await cartModel.findOne({ userId: userId });
+
+        if (!findCart)
+            return res.status(404).send({ status: false, message: `No such cart exist for ${userId}` });
+
 
         let data = req.body;
 
@@ -140,7 +159,7 @@ exports.updateOrder = async (req, res) => {
         }
 
         let newStatus = {}
-        if (status == "cancelled") {
+        if (status == "cancelled" || status == "completed") {
 
             if (findOrder.cancellable == false) {
                 return res.status(400).send({ status: false, message: "this order is not cancellable" })
@@ -152,7 +171,7 @@ exports.updateOrder = async (req, res) => {
 
         let updateOrder = await orderModel.findByIdAndUpdate({ _id: findOrder._id }, newStatus, { new: true })
 
-        return res.status(200).send({ status: true, message: "success", data: updateOrder })
+        return res.status(200).send({ status: true, message: "Success", data: updateOrder })
     } catch (error) {
         return res.status(500).send({ status: false, error: error.message })
     }

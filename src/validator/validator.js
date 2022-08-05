@@ -25,7 +25,7 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-     return /^(?!.* )(?=.*\d)(?=.*[a-zA-Z]).{8,15}$/.test(Password)
+     return /^(?!.* )(?=.*[a-zA-Z]).{8,15}$/.test(Password)
 
    
   }
