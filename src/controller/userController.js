@@ -75,7 +75,7 @@ exports.createUser = async (req, res) => {
             return res.status(400).send({ status: false, message: "Address is required" });
 
         data.address = JSON.parse(data.address);
-        console.log(typeof data.address)
+        
 
         let { shipping, billing } = data.address;
         //validating the address 
