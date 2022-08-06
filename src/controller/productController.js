@@ -149,7 +149,7 @@ exports.getProduct = async (req, res) => {
                         return res.status(400).send({ status: false, message: "Not a valid Name" })
                     }
                     const titleName = name.replace(/\s{2,}/g, ' ').trim()
-                    filter['title'] = { $regex: titleName, $options: 'i' }
+                    filter['title'] = { $regex: titleName, $options: 'i' }  //options: 'i' to make case insensitive
 
                 }
 
