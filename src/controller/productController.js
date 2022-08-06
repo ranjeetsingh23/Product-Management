@@ -35,22 +35,22 @@ exports.createProduct = async (req, res) => {
         if (!((validate.isValidString(price)) && validate.isValidPrice(price))) return res.status(400).send({ status: false, message: "Price of product should be valid and in numbers" });
 
 
-        if (data.currencyId || typeof data.currencyId == 'string') {
+        if (currencyId || typeof currencyId == 'string') {
             //checking for currency Id
             if (validate.isValid(currencyId)) return res.status(400).send({ status: false, message: " currencyId should not be an empty string" });
 
             if (!(/INR/.test(currencyId))) return res.status(400).send({ status: false, message: " currencyId should be in 'INR' Format" });
         } else {
-            data.currencyId = "INR"
+            currencyId = "INR"
         }
 
-        if (data.currencyFormat || typeof data.currencyFormat == 'string') {
+        if (currencyFormat || typeof currencyFormat == 'string') {
             //checking for currency format
-            if (validate.isValid(data.currencyFormat)) return res.status(400).send({ status: false, message: "Currency format of product should not be empty" });
+            if (validate.isValid(currencyFormat)) return res.status(400).send({ status: false, message: "Currency format of product should not be empty" });
 
-            if (!(/₹/.test(data.currencyFormat))) return res.status(400).send({ status: false, message: "Currency format of product should be in '₹' " });
+            if (!(/₹/.test(currencyFormat))) return res.status(400).send({ status: false, message: "Currency format of product should be in '₹' " });
         } else {
-            data.currencyFormat = "₹"
+            currencyFormat = "₹"
         }
 
 
@@ -63,7 +63,7 @@ exports.createProduct = async (req, res) => {
                     //converting from string to boolean
                     data.isFreeShipping = JSON.parse(data.isFreeShipping);
                 } else {
-                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
+                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" })
                 }
             }
         }
@@ -116,14 +116,23 @@ exports.getProduct = async (req, res) => {
         let userQuery = req.query
         let checkquery = validate.anyObjectKeysEmpty(userQuery)
         if (checkquery) return res.status(400).send({ status: false, message: `${checkquery} can't be empty` });
+
         let filter = { isDeleted: false }
+
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = userQuery
 
-        if (Object.keys(userQuery).length == 0) {  //this block will work in case no filter is provided
+
+        //if no filter is provided
+        if (Object.keys(userQuery).length == 0) {
+
+            //.collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
             const product = await productModel.find({ isDeleted: false }).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
-            if (product.length == 0) return res.status(404).send({ status: false, msg: "No such product exist" });
-            return res.status(200).send({ status: true, data: product })
+            if (product.length == 0) return res.status(404).send({ status: false, msg: "No product found" });
+            return res.status(200).send({ status: true, message: 'Success', data: product })
         }
+
+        // If filter is provided
+        let keys = "size, name, priceGreaterThan, priceLessThan, priceSort"
 
         if (userQuery.size || userQuery.priceSort || userQuery.priceLessThan || userQuery.priceGreaterThan || userQuery.name) {
 
@@ -133,21 +142,27 @@ exports.getProduct = async (req, res) => {
                     const sizeArray = size.trim().split(",").map((s) => s.trim());
                     filter['availableSizes'] = { $in: sizeArray }
                 }
-                if (!validate.isValid(name)) {
+
+
+                if (name) {
+                    if (validate.isValid(name)) {
+                        return res.status(400).send({ status: false, message: "Not a valid Name" })
+                    }
                     const titleName = name.replace(/\s{2,}/g, ' ').trim()
                     filter['title'] = { $regex: titleName, $options: 'i' }
+
                 }
 
                 if (priceGreaterThan) {
                     if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
-                        return res.status(400).send({ status: false, message: "Not a valid price" })
+                        return res.status(400).send({ status: false, message: "Not a valid priceGreaterThan" })
                     }
                     filter['price'] = { $gt: priceGreaterThan }
 
                 }
                 if (priceLessThan) {
                     if (validate.isValid(priceLessThan) || !validate.isValidPrice(priceLessThan)) {
-                        return res.status(400).send({ status: false, message: "Not a valid price" })
+                        return res.status(400).send({ status: false, message: "Not a valid priceLessThan" })
                     }
                     filter['price'] = { $lt: priceLessThan }
                 }
@@ -164,23 +179,22 @@ exports.getProduct = async (req, res) => {
                 }
             }
 
+            //.collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
+            let product = await productModel.find(filter).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
+            if (product.length === 0) return res.status(404).send({ status: false, message: "No products found" })
+            return res.status(200).send({ status: true, message: 'Success', data: product })
+
         } else {
-            return res.status(400).send({ status: false, message: "Cannot provide other keys" });
+            return res.status(400).send({ status: false, message: `Cannot provide keys other than ${keys}` })
         }
-
-
-
-
-        //.collation is used to check substrings --- locale : en = english lang and will neglect pronunciation of words
-        let product = await productModel.find(filter).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
-        if (product.length === 0) return res.status(404).send({ status: false, message: "No products found" })
-        return res.status(200).send({ status: true, message: 'Success', data: product })
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
 
+
 }
+
 
 
 // ----------------------------------- GET product/:productId -------------------------------------------
@@ -196,16 +210,15 @@ exports.getProductById = async (req, res) => {
         if (!isValidProductId) {
             return res.status(404).send({ status: false, message: "Product id not found" })
         }
-
         if (isValidProductId.isDeleted == true) {
             return res.status(404).send({ status: true, message: "Product is already deleted" });
-
         }
+        
         let allProducts = await productModel.findOne({ _id: id, isDeleted: false }).select({ deletedAt: 0 })
         return res.status(200).send({ status: true, message: "Success", data: allProducts })
     }
-    catch (error) {
-        res.status(500).send({ status: false, message: error.message })
+    catch (err) {
+        res.status(500).send({ status: false, message: err.message })
     }
 }
 

@@ -67,7 +67,7 @@ exports.createOrder = async (req, res) => {
                     cancellable = cancellable.toLowerCase().trim();
                     if (cancellable == 'true' || cancellable == 'false') {
                         //converting from string to boolean
-                        cancellable = JSON.parse(cancellable);
+                        cancellable = JSON.parse(cancellable)
                     } else {
                         return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
                     }

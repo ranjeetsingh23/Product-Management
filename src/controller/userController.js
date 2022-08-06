@@ -13,7 +13,7 @@ exports.createUser = async (req, res) => {
 
         let { fname, lname, email, password, phone, address } = data;
 
-        
+
 
         //validationg the request body
         if (validate.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to create your account" });
@@ -67,25 +67,19 @@ exports.createUser = async (req, res) => {
         if (!validate.isValidPwd(password)) return res.status(400).send({ status: false, message: "Password should be between 8 and 15 character and it should be alpha numeric" });
 
         //checking for image link
-         if (files.length === 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
+        if (files.length === 0) return res.status(400).send({ status: false, message: "ProfileImage is required" });
 
 
         //checking for address
-        if (!address) return res.status(400).send({ status: false, message: "Address is required" });
+        if (!address || validate.isValid(data.address)) 
+            return res.status(400).send({ status: false, message: "Address is required" });
 
-        if (data.address === "" || validate.isValid(data.address)) {
-            return res.status(400).send({ status: false, message: "Please enter a valid address" })
-        }
-            data.address = JSON.parse(data.address);
-
-            if (typeof data.address != "object") {
-                return res.status(400).send({ status: false, message: "address should be an object" });
-            }
+        data.address = JSON.parse(data.address);
+        console.log(typeof data.address)
 
         let { shipping, billing } = data.address;
         //validating the address 
         if (data.address && typeof data.address != "object") {
-            console.log(typeof address)
             return res.status(400).send({ status: false, message: "Address is in wrong format" })
         };
 
@@ -109,18 +103,16 @@ exports.createUser = async (req, res) => {
             };
             if (!validate.isvalidCity(shipping.city)) {
                 return res.status(400).send({ status: false, message: "City name should only contain alphabets." });
-              }
+            }
             if (!shipping.pincode) {
                 return res.status(400).send({ status: false, message: "Pincode is required" })
             }
             if (validate.isValid(shipping.pincode)) {
                 return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
             };
-
             if (!validate.isValidPincode(shipping.pincode)) {
                 return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
             };
-
         } else {
             return res.status(400).send({ status: false, message: "Shipping address is required" })
         }
@@ -145,25 +137,21 @@ exports.createUser = async (req, res) => {
                 return res.status(400).send({ status: false, message: "City is in wrong format" })
             };
             if (!validate.isvalidCity(billing.city)) {
-                        return res.status(400).send({ status: false, message: "City name should only contain alphabets." });
-                }
+                return res.status(400).send({ status: false, message: "City name should only contain alphabets." });
+            }
             if (!billing.pincode) {
                 return res.status(400).send({ status: false, message: "Pincode is required" })
             }
             if (validate.isValid(billing.pincode)) {
                 return res.status(400).send({ status: false, message: "Pincode is in wrong format" })
             };
-
             if (!validate.isValidPincode(billing.pincode)) {
                 return res.status(400).send({ status: false, message: "Please Provide valid Pincode " })
             };
-
         } else {
             return res.status(400).send({ status: false, message: "billing address is required" })
         }
 
-        
-       
         //hashing password with bcrypt
         data.password = await bcrypt.hash(password, 10);
 
@@ -180,9 +168,7 @@ exports.createUser = async (req, res) => {
     }
 }
 
-
 // --------------------------------------------- USER LOGIN --------------------------------------------------------
-
 
 exports.userLogin = async (req, res) => {
 
@@ -200,7 +186,7 @@ exports.userLogin = async (req, res) => {
         if (!email)
             return res.status(400).send({ status: false, message: "user Email is required" })
 
-            if (validate.isValid(email)) return res.status(400).send({ status: false, message: "Email cannot be empty" });
+        if (validate.isValid(email)) return res.status(400).send({ status: false, message: "Email cannot be empty" });
         //email and password check from db
         let user = await userModel.findOne({ email: email });
         if (!user)
@@ -208,8 +194,8 @@ exports.userLogin = async (req, res) => {
         //password is required
         if (!password)
             return res.status(400).send({ status: false, message: "user password is required" })
-             
-        if (validate.isValid(password)) return res.status(400).send({ status: false, message: "Password cannot be empty" });
+
+        if (validate.isValid(password)) return res.status(400).send({ status: false, message: "Password cannot be empty" })
 
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(401).send({ status: false, message: "Incorrect password" })
@@ -237,7 +223,6 @@ exports.getUser = async (req, res) => {
 
         //getting the user document
         const user = await userModel.findOne({ _id: userId })
-        // if (!user) return res.status(404).send({ status: false, message: "User Not Found" })
         return res.status(200).send({ status: true, message: 'User Profile Details', data: user })
     } catch (error) {
         res.status(500).send({ status: false, message: error.message })
@@ -253,10 +238,6 @@ exports.updateUser = async (req, res) => {
         let files = req.files;
 
         let { fname, lname, email, password, phone } = data;
-
-        //getting user document
-        let userProfile = await userModel.findById(userId);
-        if (!userProfile) return res.status(404).send({ status: false, message: "User Not Found" });
 
         //getting the AWS-S3 link after uploading the user's profileImage
         if (files && files.length != 0) {
@@ -305,17 +286,19 @@ exports.updateUser = async (req, res) => {
             data.password = await bcrypt.hash(password, 10);
         }
 
-        if (data.address === "" || validate.isValid(data.address)) {
+        if (data.address === "") {
             return res.status(400).send({ status: false, message: "Please enter a valid address" })
         } else if (data.address) {
-           
-           
+
+            if (validate.isValid(data.address)) {
+                return res.status(400).send({ status: false, message: "Please provide address field" });
+            }
             data.address = JSON.parse(data.address);
 
-            if (typeof data.address != "object") {
+            if (typeof data.address !== "object") {
                 return res.status(400).send({ status: false, message: "address should be an object" });
             }
-            let { shipping, billing } = data.address;
+            let { shipping, billing } = data.address
 
             if (shipping) {
                 if (typeof shipping != "object") {
@@ -338,7 +321,6 @@ exports.updateUser = async (req, res) => {
                     return res.status(400).send({ status: false, message: "shipping pincode is required" });
                 }
 
-                
                 if (!validate.isValidPincode(shipping.pincode)) {
                     return res.status(400).send({ status: false, message: "please enter valid pincode" });
                 }
@@ -357,7 +339,7 @@ exports.updateUser = async (req, res) => {
                     return res.status(400).send({ status: false, message: "billing city is required" });
                 }
                 if (!validate.isvalidCity(billing.city)) {
-                    return res.status(400).send({ status: false, message: "city field have to fill by alpha characters"});
+                    return res.status(400).send({ status: false, message: "city field have to fill by alpha characters" });
                 }
 
                 if (validate.isValid(billing.pincode)) {
@@ -365,7 +347,7 @@ exports.updateUser = async (req, res) => {
                 }
 
                 if (!validate.isValidPincode(billing.pincode)) {
-                    return res.status(400).send({ status: false, message: "please enter valid billing pincode"});
+                    return res.status(400).send({ status: false, message: "please enter valid billing pincode" });
                 }
             }
         }

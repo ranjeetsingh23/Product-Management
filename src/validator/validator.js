@@ -7,7 +7,6 @@ exports.isValid = (value) => {
   return false;
 }
 
-
 exports.isValidBody = (reqBody) => {
   return Object.keys(reqBody).length === 0;
 }
@@ -25,16 +24,12 @@ exports.isValidString = (String) => {
   };
   
   exports.isValidPwd = (Password) => {
-     return /^(?!.* )(?=.*[a-zA-Z]).{8,15}$/.test(Password)
-
-   
+     return /^(?!.* )(?=.*[a-zA-Z]).{8,15}$/.test(Password)   
   }
   
   exports.isValidPincode = (num) => {
    return /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(num);
-
   }
-
 
   exports.isValidObjectId = (objectId) => {
     return mongoose.Types.ObjectId.isValid(objectId);
