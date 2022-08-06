@@ -190,7 +190,7 @@ exports.updateCart = async (req, res) => {
             return res.status(400).send({ status: false, message: "Product is not present in cart" })
         }
 
-        let index = cart.items.indexOf(productArr[0]);
+        let index = cart.items.indexOf(productArr[0])
 
         if (data.removeProduct == 0) {
 

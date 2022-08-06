@@ -71,9 +71,11 @@ exports.createUser = async (req, res) => {
 
 
         //checking for address
-        if (!address) return res.status(400).send({ status: false, message: "Address is required" });
+        if (!address || validate.isValid(data.address)) 
+            return res.status(400).send({ status: false, message: "Address is required" });
 
         data.address = JSON.parse(data.address);
+        console.log(typeof data.address)
 
         let { shipping, billing } = data.address;
         //validating the address 
@@ -166,9 +168,7 @@ exports.createUser = async (req, res) => {
     }
 }
 
-
 // --------------------------------------------- USER LOGIN --------------------------------------------------------
-
 
 exports.userLogin = async (req, res) => {
 
@@ -195,7 +195,7 @@ exports.userLogin = async (req, res) => {
         if (!password)
             return res.status(400).send({ status: false, message: "user password is required" })
 
-        if (validate.isValid(password)) return res.status(400).send({ status: false, message: "Password cannot be empty" });
+        if (validate.isValid(password)) return res.status(400).send({ status: false, message: "Password cannot be empty" })
 
         let actualPassword = await bcrypt.compare(password, user.password);
         if (!actualPassword) return res.status(401).send({ status: false, message: "Incorrect password" })
@@ -238,10 +238,6 @@ exports.updateUser = async (req, res) => {
         let files = req.files;
 
         let { fname, lname, email, password, phone } = data;
-
-        //getting user document
-        let userProfile = await userModel.findById(userId);
-        if (!userProfile) return res.status(404).send({ status: false, message: "User Not Found" });
 
         //getting the AWS-S3 link after uploading the user's profileImage
         if (files && files.length != 0) {
@@ -294,13 +290,15 @@ exports.updateUser = async (req, res) => {
             return res.status(400).send({ status: false, message: "Please enter a valid address" })
         } else if (data.address) {
 
-
+            if (validate.isValid(data.address)) {
+                return res.status(400).send({ status: false, message: "Please provide address field" });
+            }
             data.address = JSON.parse(data.address);
 
-            if (typeof data.address != "object") {
+            if (typeof data.address !== "object") {
                 return res.status(400).send({ status: false, message: "address should be an object" });
             }
-            let { shipping, billing } = data.address;
+            let { shipping, billing } = data.address
 
             if (shipping) {
                 if (typeof shipping != "object") {
@@ -322,7 +320,6 @@ exports.updateUser = async (req, res) => {
                 if (validate.isValid(shipping.pincode)) {
                     return res.status(400).send({ status: false, message: "shipping pincode is required" });
                 }
-
 
                 if (!validate.isValidPincode(shipping.pincode)) {
                     return res.status(400).send({ status: false, message: "please enter valid pincode" });

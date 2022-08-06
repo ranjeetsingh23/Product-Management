@@ -63,7 +63,7 @@ exports.createProduct = async (req, res) => {
                     //converting from string to boolean
                     data.isFreeShipping = JSON.parse(data.isFreeShipping);
                 } else {
-                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
+                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" })
                 }
             }
         }
