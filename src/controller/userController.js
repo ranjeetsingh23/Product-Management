@@ -73,9 +73,14 @@ exports.createUser = async (req, res) => {
         //checking for address
         if (!address) return res.status(400).send({ status: false, message: "Address is required" });
 
-       
+        if (data.address === "" || validate.isValid(data.address)) {
+            return res.status(400).send({ status: false, message: "Please enter a valid address" })
+        }
             data.address = JSON.parse(data.address);
-       
+
+            if (typeof data.address != "object") {
+                return res.status(400).send({ status: false, message: "address should be an object" });
+            }
 
         let { shipping, billing } = data.address;
         //validating the address 
@@ -156,6 +161,8 @@ exports.createUser = async (req, res) => {
         } else {
             return res.status(400).send({ status: false, message: "billing address is required" })
         }
+
+        
        
         //hashing password with bcrypt
         data.password = await bcrypt.hash(password, 10);
@@ -298,7 +305,7 @@ exports.updateUser = async (req, res) => {
             data.password = await bcrypt.hash(password, 10);
         }
 
-        if (data.address === "") {
+        if (data.address === "" || validate.isValid(data.address)) {
             return res.status(400).send({ status: false, message: "Please enter a valid address" })
         } else if (data.address) {
            

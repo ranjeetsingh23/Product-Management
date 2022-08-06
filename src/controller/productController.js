@@ -118,13 +118,17 @@ exports.getProduct = async (req, res) => {
         if (checkquery) return res.status(400).send({ status: false, message: `${checkquery} can't be empty` });
         let filter = { isDeleted: false }
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = userQuery
-        
 
+        if (Object.keys(userQuery).length == 0) {  //this block will work in case no filter is provided
+            const product = await productModel.find({ isDeleted: false }).sort({ price: priceSort }).collation({ locale: "en", strength: 1 }); //to make case insensitive Indexes
+            if (product.length == 0) return res.status(404).send({ status: false, msg: "No such product exist" });
+            return res.status(200).send({ status: true, data: product })
+        }
 
         if (userQuery.size || userQuery.priceSort || userQuery.priceLessThan || userQuery.priceGreaterThan || userQuery.name) {
-           
+
             if (Object.keys(userQuery).length > 0) {
-           
+
                 if (!validate.isValid(size)) {
                     const sizeArray = size.trim().split(",").map((s) => s.trim());
                     filter['availableSizes'] = { $in: sizeArray }
@@ -136,14 +140,14 @@ exports.getProduct = async (req, res) => {
 
                 if (priceGreaterThan) {
                     if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
-                        return res.status(400).send({ status: false, message: "not valid price" })
+                        return res.status(400).send({ status: false, message: "Not a valid price" })
                     }
                     filter['price'] = { $gt: priceGreaterThan }
 
                 }
                 if (priceLessThan) {
                     if (validate.isValid(priceLessThan) || !validate.isValidPrice(priceLessThan)) {
-                        return res.status(400).send({ status: false, message: "not valid price" })
+                        return res.status(400).send({ status: false, message: "Not a valid price" })
                     }
                     filter['price'] = { $lt: priceLessThan }
                 }
@@ -158,11 +162,12 @@ exports.getProduct = async (req, res) => {
                             return res.status(400).send({ status: false, message: "Price short value should be 1 or -1 only" })
                     }
                 }
-            } 
-           
-        }else {
+            }
+
+        } else {
             return res.status(400).send({ status: false, message: "Cannot provide other keys" });
         }
+
 
 
 
@@ -174,6 +179,7 @@ exports.getProduct = async (req, res) => {
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
     }
+
 }
 
 
@@ -190,17 +196,16 @@ exports.getProductById = async (req, res) => {
         if (!isValidProductId) {
             return res.status(404).send({ status: false, message: "Product id not found" })
         }
-        let isDeleted = await productModel.findOne({ _id: id, isDeleted: true });
 
-        if (isDeleted) {
+        if (isValidProductId.isDeleted == true) {
             return res.status(404).send({ status: true, message: "Product is already deleted" });
 
         }
         let allProducts = await productModel.findOne({ _id: id, isDeleted: false }).select({ deletedAt: 0 })
         return res.status(200).send({ status: true, message: "Success", data: allProducts })
     }
-    catch (err) {
-        res.status(500).send({ status: false, message: err.message })
+    catch (error) {
+        res.status(500).send({ status: false, message: error.message })
     }
 }
 
