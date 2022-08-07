@@ -61,4 +61,6 @@ exports.isvalidCity = function (city){
 }
 
 
-
+exports.isValidStatus = (status) => {
+  return ['pending', 'completed', 'cancelled'].includes(status);
+}

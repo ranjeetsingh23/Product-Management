@@ -41,7 +41,7 @@ exports.createProduct = async (req, res) => {
 
             if (!(/INR/.test(currencyId))) return res.status(400).send({ status: false, message: " currencyId should be in 'INR' Format" });
         } else {
-            currencyId = "INR"
+            data.currencyId = "INR"
         }
 
         if (currencyFormat || typeof currencyFormat == 'string') {
@@ -50,7 +50,7 @@ exports.createProduct = async (req, res) => {
 
             if (!(/₹/.test(currencyFormat))) return res.status(400).send({ status: false, message: "Currency format of product should be in '₹' " });
         } else {
-            currencyFormat = "₹"
+            data.currencyFormat = "₹"
         }
 
 
@@ -93,16 +93,14 @@ exports.createProduct = async (req, res) => {
                     return res.status(400).send({ status: false, message: "Size should be one of these - 'S', 'XS', 'M', 'X', 'L', 'XXL', 'XL'" });
                 }
             }
-
-            if (installments || typeof installments == 'string') {
-                if (!validate.isValidString(installments)) return res.status(400).send({ status: false, message: "Installments should be in number" });
-                if (!validate.isValidPrice(installments)) return res.status(400).send({ status: false, message: "Installments should be valid" });
-            }
-
-            let createProduct = await productModel.create(data);
-            return res.status(201).send({ status: true, message: "Success", data: createProduct });
+        }
+        if (installments || typeof installments == 'string') {
+            if (!validate.isValidString(installments)) return res.status(400).send({ status: false, message: "Installments should be in number" });
+            if (!validate.isValidPrice(installments)) return res.status(400).send({ status: false, message: "Installments should be valid" });
         }
 
+        let createProduct = await productModel.create(data);
+        return res.status(201).send({ status: true, message: "Success", data: createProduct });
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -227,11 +225,11 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
-        let ProductId = req.params.productId
+        let productId = req.params.productId
 
 
-        if (!validate.isValidObjectId(ProductId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
-        let getId = await productModel.findOne({ _id: ProductId })
+        if (!validate.isValidObjectId(productId)) { return res.status(400).send({ status: false, message: "Please provide valid Product Id" }) }
+        let getId = await productModel.findOne({ _id: productId })
         if (!getId) {
             return res.status(404).send({ status: false, message: "Product Not Found for the request id" });
         }
@@ -270,7 +268,7 @@ exports.updateProduct = async (req, res) => {
                 return res.status(400).send({ status: false, message: "Description should not be empty String" })
             }
             if (validate.isValidString(data.description)) {
-                return res.status(400).send({ status: false, message: "Description should not contaiins numbers" })
+                return res.status(400).send({ status: false, message: "Description should not contains numbers" })
             }
         }
         // ====================================price validation===============================================
@@ -331,7 +329,7 @@ exports.updateProduct = async (req, res) => {
         }
 
         let updatedProduct = await productModel.findByIdAndUpdate(
-            { _id: ProductId },
+            { _id: productId },
             data,
             { new: true }
         )

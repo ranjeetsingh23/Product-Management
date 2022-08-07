@@ -46,33 +46,30 @@ exports.createOrder = async (req, res) => {
         if (findCart.items.length === 0)
             return res.status(400).send({ status: false, message: "No Item in Cart" });
 
-            let validStatus = ['pending', 'completed', 'cancelled']; //validating the status
 
-            if (status || typeof status == "string") {
-                //checking if the status is valid
-                if(validate.isValid(status)){
-                    return res.status(400).send({ status: false, message: " Please provide status"})
-                }
-                if (!validStatus.includes(status))
-                    return res.status(400).send({ status: false, message: "Status should be one of 'pending', 'completed', 'cancelled'" });
+        if (status || typeof status == "string") {
+            //checking if the status is valid
+            if (validate.isValid(status)) {
+                return res.status(400).send({ status: false, message: " Please provide status" })
             }
-    
-    
-    
-            if (cancellable || typeof cancellable == 'string') {
-                if (validate.isValid(cancellable)) 
-                    return res.status(400).send({ status: false, message: "cancellable should not contain white spaces" });
-                if (typeof cancellable == 'string') {
-                    //converting it to lowercase and removing white spaces
-                    cancellable = cancellable.toLowerCase().trim();
-                    if (cancellable == 'true' || cancellable == 'false') {
-                        //converting from string to boolean
-                        cancellable = JSON.parse(cancellable)
-                    } else {
-                        return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
-                    }
+            if (!validate.isValidStatus(status))
+                return res.status(400).send({ status: false, message: "Status should be one of 'pending', 'completed', 'cancelled'" });
+        }
+
+        if (cancellable || typeof cancellable == 'string') {
+            if (validate.isValid(cancellable))
+                return res.status(400).send({ status: false, message: "cancellable should not contain white spaces" });
+            if (typeof cancellable == 'string') {
+                //converting it to lowercase and removing white spaces
+                cancellable = cancellable.toLowerCase().trim();
+                if (cancellable == 'true' || cancellable == 'false') {
+                    //converting from string to boolean
+                    cancellable = JSON.parse(cancellable)
+                } else {
+                    return res.status(400).send({ status: false, message: "Please enter either 'true' or 'false'" });
                 }
             }
+        }
 
         let totalQuantity = 0;
         for (let i = 0; i < findCart.items.length; i++)
@@ -135,12 +132,9 @@ exports.updateOrder = async (req, res) => {
             return res.status(400).send({ status: false, message: "Please provide valid order Id" });
         }
 
-
-        let validStatus = ['pending', 'completed', 'cancelled']; //validating the status
-
         if (status) {
             //checking if the status is valid
-            if (!validStatus.includes(status))
+            if (!validate.isValidStatus(status))
                 return res.status(400).send({ status: false, message: "Status should be one of 'pending', 'completed', 'cancelled'" });
         }
 
@@ -151,7 +145,7 @@ exports.updateOrder = async (req, res) => {
         if (findOrder.isDeleted == true)
             return res.status(404).send({ status: false, message: "order is aready deleted" })
 
-        if (findOrder.status == "completed") {
+        if (findOrder.status === "completed") {
             return res.status(400).send({ status: false, message: "Cannot cancel completed order" })
         }
         if (findOrder.status === "cancelled") {

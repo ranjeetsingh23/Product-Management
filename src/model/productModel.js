@@ -21,14 +21,12 @@ const productSchema = new mongoose.Schema({
   currencyId: {
     type: String, 
     require: true,
-    trim: true,
-    enum: ['INR']
+    trim: true
   },           
   currencyFormat: {
     type: String, 
     require: true,
-    trim: true,
-    enum: ['₹']
+    trim: true
   },      
   isFreeShipping: {
     type: Boolean, 
