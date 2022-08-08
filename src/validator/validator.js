@@ -12,11 +12,11 @@ exports.isValidBody = (reqBody) => {
 }
 
 exports.isValidString = (String) => {
-    return /\d/.test(String)
+    return /\d/.test(String);
   }
   
   exports.isValidPhone = (Mobile) => {
-    return /^[6-9]\d{9}$/.test(Mobile)
+    return /^[6-9]\d{9}$/.test(Mobile);
   };
   
   exports.isValidEmail = (Email) => {
