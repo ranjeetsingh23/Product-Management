@@ -150,7 +150,7 @@ exports.getProduct = async (req, res) => {
                     filter['title'] = { $regex: titleName, $options: 'i' }  //options: 'i' to make case insensitive
 
                 }
-
+                                                
                 if (priceGreaterThan) {
                     if (validate.isValid(priceGreaterThan) || !validate.isValidPrice(priceGreaterThan)) {
                         return res.status(400).send({ status: false, message: "Not a valid priceGreaterThan" })

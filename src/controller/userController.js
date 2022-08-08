@@ -300,6 +300,8 @@ exports.updateUser = async (req, res) => {
             }
             let { shipping, billing } = data.address
 
+            
+
             if (shipping) {
                 if (typeof shipping != "object") {
                     return res.status(400).send({ status: false, message: "shipping should be an object" });
@@ -324,6 +326,8 @@ exports.updateUser = async (req, res) => {
                 if (!validate.isValidPincode(shipping.pincode)) {
                     return res.status(400).send({ status: false, message: "please enter valid pincode" });
                 }
+            }else{
+                return res.status(400).send({ status: false, message: "please enter shipping address" });
             }
 
             if (billing) {
@@ -349,6 +353,8 @@ exports.updateUser = async (req, res) => {
                 if (!validate.isValidPincode(billing.pincode)) {
                     return res.status(400).send({ status: false, message: "please enter valid billing pincode" });
                 }
+            }else{
+                return res.status(400).send({ status: false, message: "please enter billing address" });
             }
         }
 

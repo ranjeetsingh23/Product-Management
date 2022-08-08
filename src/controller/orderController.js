@@ -155,9 +155,9 @@ exports.updateOrder = async (req, res) => {
         let newStatus = {}
         if (status == "cancelled" || status == "completed") {
 
-            if (findOrder.cancellable == false) {
+            if (findOrder.cancellable == false && status == 'cancelled') {
                 return res.status(400).send({ status: false, message: "this order is not cancellable" })
-            } else {
+            } else  {
                 newStatus.status = status
             }
         }
